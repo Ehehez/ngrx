@@ -36,9 +36,9 @@
 <div>
     <table>
         <tr>
-            <td (click)="decrement()"><i class="fa fa-minus"></i></td>
-            <td style="min-width:50px" class="text-center">{{counter | async}}</td>
-            <td (click)="increment()"><i class="fa fa-plus"></i></td>
+            <td (click)="onDown()"><i class="fa fa-minus"></i></td>
+            <td style="min-width:50px" class="text-center">{{count$ | async}}</td>
+            <td (click)="onUp()"><i class="fa fa-plus"></i></td>
         </tr>
     </table>
 </div>

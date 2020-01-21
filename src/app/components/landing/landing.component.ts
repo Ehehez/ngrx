@@ -43,9 +43,14 @@ export class LandingComponent implements OnInit {
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Store, State } from '@ngrx/store';
-import { INCREMENT, DECREMENT, RESET } from '../../store/reducers/counter.reducer';
-import { AppState2 } from 'src/app/store/app.states';
-import { initialState } from 'src/app/store/reducers/counter.reducer';
+import {
+  DoCounterUp,
+  DoCounterDown,
+  DoCounterReset,
+  DoCounterSet
+} from 'src/app/store/actions/counter.actions';
+import { StoreState } from 'src/app/store/app.states';
+
 
 
 @Component({
@@ -54,22 +59,43 @@ import { initialState } from 'src/app/store/reducers/counter.reducer';
 })
 
 export class LandingComponent implements OnInit {
-  private counter: Observable<number>;
+  count$: Observable<number>;
 
-  constructor(private store: Store<AppState2>) {
-    this.counter = this.store.select<AppState2>(x => x) as Observable<any>;
+
+  /*constructor(private store: Store<AppState2>) {
+    this.count$ = this.store.select(state => state.counter.counter);
+  }*/
+  constructor(private readonly store: Store<StoreState>) {
+    // 3 Connect Counter stream to Store Counter state.
+    this.count$ = this.store.select(state => state.counter.count);
   }
+
+  /*constructor(private store: Store<AppState2>) {
+    this.counter = this.store.select<AppState2>(x => x);
+  }*/
 
   ngOnInit() {
 
   }
 
-  private increment() {
-    this.store.dispatch({ type: INCREMENT });
+  onUp() {
+    // 4 Dispatch action to all reducers.
+    this.store.dispatch(new DoCounterUp());
   }
 
-  private decrement() {
-    this.store.dispatch({ type: DECREMENT });
+  onDown() {
+    // 5 Dispatch action to all reducers.
+    this.store.dispatch(new DoCounterDown());
+  }
+
+  onSet(count: string) {
+    // 6 Dispatch action to all reducers.
+    this.store.dispatch(new DoCounterSet(parseInt(count, 10)));
+  }
+
+  onReset() {
+    // 7 Dispatch action to all reducers.
+    this.store.dispatch(new DoCounterReset());
   }
 
 }
