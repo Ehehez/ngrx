@@ -1,89 +1,37 @@
-<!--<div class="row">
-    <div class="col-md-4">
-
-        <h1>Angular + NGRX</h1>
-        <hr><br>
-
-        <div *ngIf="isAuthenticated; then doSomething; else doSomethingElse;"></div>
-        <ng-template #doSomething>
-            <p>You logged in <em>{{user.email}}!</em></p>
-            <button class="btn btn-primary" (click)="logOut()">Log out</button>
-        </ng-template>
-        <ng-template #doSomethingElse>
-            <a [routerLink]="['/log-in']" class="btn btn-primary">Log in</a>
-            <a [routerLink]="['/sign-up']" class="btn btn-primary">Sign up</a>
-        </ng-template>
-
-        <a [routerLink]="['/status']" class="btn btn-primary">Status</a>
-
-        <br><br><br>
-
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Current State</h5>
-                <ul>
-                    <li><strong>isAuthenticated</strong> - {{isAuthenticated}}</li>
-                    <li><strong>user.email</strong> - {{ user?.email || 'null'}}</li>
-                    <li><strong>user.token</strong> - {{ user?.token || 'null'}}</li>
-                    <li><strong>errorMessage</strong> - {{ errorMessage || 'null'}}</li>
-                </ul>
-            </div>
-        </div>
-
-    </div>
-</div>
-
 <div>
-    <table>
-        <tr>
-            <td (click)="onDown()"><i class="fa fa-minus"></i></td>
-            <td style="min-width:50px" class="text-center">{{count$ | async}}</td>
-            <td (click)="onUp()"><i class="fa fa-plus"></i></td>
-        </tr>
-    </table>
+    <button class="btn btn-default" id="botBasket" (click)="goToBasket()">
+        <i class="fa fa-shopping-cart "></i> Basket </button>
+
+    <button class="btn btn-default" (click)="goToHistorial()">
+        <i class="fa fa-list"></i> Historial </button>
+
+    <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
+    <button class="btn btn-primary-outline float-right" [disabled]="true" (click)="logOut()">Logeado como
+        {{user}}</button>
 </div>
-
-<div *ngIf="isAuthenticated; then doSomething; else doSomethingElse;"></div>
-<ng-template #doSomething>
-    <p>You logged in <em>{{user.email}}!</em></p>
-    <button class="btn btn-primary" (click)="logOut()">Log out</button>
-</ng-template>
-<ng-template #doSomethingElse>
-    <a [routerLink]="['/log-in']" class="btn btn-primary">Log in</a>
-    <a [routerLink]="['/sign-up']" class="btn btn-primary">Sign up</a>
-</ng-template>-->
-
+<div>
+    <br>
+    <br>
+</div>
 <div>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
                 <th class="text-center">ID</th>
-                <th class="text-center">Title</th>
-                <th class="text-center">Price</th>
-                <th>Shopping Cart</th>
-                <th></th>
+                <th class="text-center">Artículo</th>
+                <th class="text-center">Precio</th>
+                <th class="text-center">Stock</th>
+                <th class="text-center">Shopping Cart</th>
             </tr>
         </thead>
         <tr *ngFor="let list of lista">
             <td>{{list.id}}</td>
             <td>{{list.name}}</td>
             <td>{{list.price}}</td>
-            <td>
-                <table>
-                    <tr>
-                        <td (click)="decrement(list.id-1)"><label style="min-width:25px"><i
-                                    class="fa fa-minus"></i></label></td>
-                        <td><input style="max-width:50px" readonly="readonly" type="text" value="{{list.quantity}}" />
-                        </td>
-                        <td (click)="increment(list.id-1)"><label style="min-width:25px"><i
-                                    class="fa fa-plus"></i></label></td>
-                    </tr>
-                </table>
-            </td>
-            <td>
-                <input type="button" value="Edit" class="btn btn-info" (click)="edit(list.id)" />
-                &nbsp;
-                <input type="button" value="Remove" class="btn btn-danger" (click)="remove(list.id)" />
+            <td>{{list.quantity}}</td>
+            <td class="text-center">
+                <product-booking [product]="list" (emit-events)="setShopCart($event)">
+                </product-booking>
             </td>
         </tr>
     </table>

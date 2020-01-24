@@ -4,3 +4,4 @@ export class Articulo {
     price?: any;
     quantity?: number;
 }
+

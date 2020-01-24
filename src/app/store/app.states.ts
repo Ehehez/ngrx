@@ -1,23 +1,16 @@
 import * as auth from './reducers/auth.reducers';
 import { createFeatureSelector } from '@ngrx/store';
-import {
-    counterReducer,
-    CounterState
-} from './reducers/counter.reducer';
+import * as cart from './reducers/shopcart.reducer';
+
 
 export interface AppState {
     authState: auth.State;
-}
-
-
-
-export interface StoreState {
-    counter: CounterState;
+    shopcart: cart.State;
 }
 
 export const reducers = {
     auth: auth.reducer,
-    counter: counterReducer
+    shopcart: cart.shopcartReducer
 };
 
 export const selectAuthState = createFeatureSelector<AppState>('auth');

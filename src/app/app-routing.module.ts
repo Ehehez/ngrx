@@ -5,12 +5,14 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { LandingComponent } from './components/landing/landing.component';
 import { BasketComponent } from './components/basket/basket.component';
 import { AuthGuardService } from './services/auth-guard.service';
+import { HistorialComponent } from './components/historial/historial.component';
 
 const routes: Routes = [
   { path: 'log-in', component: LogInComponent },
   { path: 'sign-up', component: SignUpComponent },
   { path: '', component: LandingComponent, canActivate: [AuthGuardService] },
   { path: 'basket', component: BasketComponent, canActivate: [AuthGuardService] },
+  { path: 'historial', component: HistorialComponent, canActivate: [AuthGuardService] },
   { path: '**', redirectTo: '/' }
 ];
 

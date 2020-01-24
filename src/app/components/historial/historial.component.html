@@ -1,0 +1,36 @@
+<div>
+    <button class="btn btn-default" (click)="goToProducts()" alignment="right">
+        <i class="fa fa-snowflake-o"></i> Productos </button>
+    <button class="btn btn-default" id="botBasket" (click)="goToBasket()">
+        <i class="fa fa-shopping-cart "></i> Basket </button>
+
+    <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
+    <button class="btn btn-primary-outline float-right" [disabled]="true" (click)="logOut()">Logeado como
+        {{user}}</button>
+</div>
+<div>
+    <br>
+    <br>
+</div>
+<div id="historial">
+    <table class="table table-inverse">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Coste</th>
+                <th colspan="2">Detalles</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let compra of compras">
+                <td>{{compra.id}}</td>
+                <td>{{compra.fechaCompra}}</td>
+                <td>{{compra.coste}}</td>
+                <td>
+                    <pre>{{compra.Descripcion}}</pre>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

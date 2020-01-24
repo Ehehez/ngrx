@@ -1,1 +1,50 @@
-<p>basket works!</p>
+<div>
+
+    <button class="btn btn-default" (click)="goToProducts()">
+        <i class="fa fa-snowflake-o"></i> Productos </button>
+
+    <button class="btn btn-default" (click)="goToHistorial()">
+        <i class="fa fa-list"></i> Historial </button>
+
+    <button class='btn btn-success align-right' [disabled]='enviado' (click)="saveOrder()">
+        <i class="fa fa-save"></i> Send Order </button>
+
+    <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
+    <button class="btn btn-primary-outline float-right" [disabled]="true" (click)="logOut()">Logeado como
+        {{user}}</button>
+</div>
+<div>
+    <br>
+    <br>
+</div>
+
+<div id="basket">
+    <table class="table table-inverse" *ngIf="(shopcart$ | async).items.length > 0; else vacio">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Number</th>
+                <th>Price/per</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of (shopcart$ | async)?.items">
+                <td>{{item.name}}</td>
+                <td>{{item.count}}</td>
+                <td>{{item.price}}</td>
+                <td>{{item.count * item.price}}</td>
+            </tr>
+            <tr>
+                <td>Precio Total</td>
+                <td></td>
+                <td></td>
+                <td>{{ total }}</td>
+            </tr>
+        </tbody>
+
+    </table>
+    <ng-template #vacio>
+        Carrito vacío.
+    </ng-template>
+</div>

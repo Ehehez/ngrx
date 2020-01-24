@@ -48,7 +48,8 @@ export class AuthEffects {
     LogInSuccess: Observable<any> = this.actions.pipe(
         ofType(AuthActionTypes.LOGIN_SUCCESS),
         tap((user) => {
-            localStorage.setItem('token', user.payload.token);
+            sessionStorage.setItem('token', user.payload.token);
+            sessionStorage.setItem('user', user.payload.email);
             this.router.navigateByUrl('/');
         })
     );
@@ -65,11 +66,11 @@ export class AuthEffects {
         .switchMap(payload => {
             return this.authService.signUp(payload.username, payload.email, payload.password)
                 .map((user) => {
-                    console.log(user);
+                    /*console.log(user);*/
                     return new SignUpSuccess({ token: user.token, email: payload.email });
                 })
                 .catch((error) => {
-                    console.log(error);
+                    /*console.log(error);*/
                     return Observable.of(new SignUpFailure({ error: error }));
                 });
         });
@@ -78,7 +79,8 @@ export class AuthEffects {
     SignUpSuccess: Observable<any> = this.actions.pipe(
         ofType(AuthActionTypes.SIGNUP_SUCCESS),
         tap((user) => {
-            localStorage.setItem('token', user.payload.token);
+            sessionStorage.setItem('token', user.payload.token);
+            sessionStorage.setItem('user', user.payload.email);
             this.router.navigateByUrl('/');
         })
     );
@@ -93,7 +95,8 @@ export class AuthEffects {
     public LogOut: Observable<any> = this.actions.pipe(
         ofType(AuthActionTypes.LOGOUT),
         tap((user) => {
-            localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('user');
             location.reload();
         })
     );

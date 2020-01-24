@@ -25,6 +25,8 @@
     "bootstrap": "^4.1.0",
     "font-awesome": "^4.7.0",
     "git": "^0.1.5",
+    "lodash-es": "^4.17.15",
+    "ng-toastr": "^1.0.0",
     "rxjs": "~6.4.0",
     "rxjs-compat": "^6.5.4",
     "tslib": "^1.10.0",

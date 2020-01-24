@@ -17,6 +17,10 @@ import { reducers } from './store/app.states';
 import { TokenInterceptor, ErrorInterceptor } from './services/token.interceptor';
 import { BasketComponent } from './components/basket/basket.component';
 import { AuthGuardService } from './services/auth-guard.service';
+import { ProductBookingComponent } from './components/product-booking/product-booking.component';
+import { BasketService } from './services/basket.service';
+import { HistorialComponent } from './components/historial/historial.component';
+import { storageMetaReducer } from './store/reducers/storage.metareducer';
 
 
 @NgModule({
@@ -25,7 +29,9 @@ import { AuthGuardService } from './services/auth-guard.service';
     SignUpComponent,
     LogInComponent,
     BasketComponent,
-    LandingComponent
+    LandingComponent,
+    ProductBookingComponent,
+    HistorialComponent
   ],
   imports: [
     BrowserModule,
@@ -33,11 +39,12 @@ import { AuthGuardService } from './services/auth-guard.service';
     FormsModule,
     HttpClientModule,
     EffectsModule.forRoot([AuthEffects]),
-    StoreModule.forRoot(reducers, {}),
+    StoreModule.forRoot(reducers, { metaReducers: [storageMetaReducer] }),
     AngularFontAwesomeModule
   ],
   providers: [AuthService,
     AuthGuardService,
+    BasketService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
