@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import { IShopCart } from 'src/app/interfaces/IShopCart';
 import { count, subscribeOn } from 'rxjs/operators';
 import { LogOut } from 'src/app/store/actions/auth.actions';
+import { ShopCart } from 'src/app/models/ShopCart';
 
 
 @Component({
@@ -30,6 +31,7 @@ export class LandingComponent implements OnInit, OnChanges {
   errorMessage = null;
   private shopcart$: Observable<IShopCart>;
   subs = new Subscription();
+  public shopCart = JSON.parse(sessionStorage.getItem('authState.shopcart')) || new ShopCart();
 
   constructor(
     private router: Router, private http: HttpClient,
@@ -45,6 +47,7 @@ export class LandingComponent implements OnInit, OnChanges {
 
 
 
+
   public ngOnChanges() {
     this.shopItem.id = this.product.id;
     this.shopItem.name = this.product.name;
@@ -57,13 +60,22 @@ export class LandingComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    let a = (JSON.parse(sessionStorage.getItem('authState')));
+    if (a) {
+      this.shopCart = a.shopcart;
+    } else this.shopCart = new ShopCart();
 
     this.subs.add(this.http.get<Articulo>('http://localhost:1337/articulos').subscribe(list => {
       this.lista = list;
     }));
+
   }
 
-
+  ngOnLoad() {
+    if (JSON.parse(sessionStorage.getItem('authState.shopcart'))) {
+      this.shopCart = JSON.parse(sessionStorage.getItem('authState.shopcart'));
+    } else this.shopCart = new ShopCart();
+  }
   logOut() {
     this.store.dispatch(new LogOut);
   }
@@ -78,6 +90,5 @@ export class LandingComponent implements OnInit, OnChanges {
   }
 
 }
-
 
 

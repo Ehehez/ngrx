@@ -11,11 +11,9 @@ export const CLEAR = 'CLEAR';
 export const shopcartReducer: ActionReducer<IShopCart> = (state: ShopCart = new ShopCart(), action: ShopcartAction) => {
     switch (action.type) {
         case PUSH:
-            return pushToCart(state, action.payload);
-
+            return state = action.payload;
         case PULL:
-            return pullFromCart(state, action.payload);
-
+            return state = action.payload;
         case CLEAR:
             state.items = [];
             state.cnt = 0;
@@ -33,7 +31,7 @@ export interface State {
     sum: number;
 }
 
-export function pushToCart(shopcart: ShopCart, payload: ShopItem) {
+/*export function pushToCart(shopcart: ShopCart, payload: ShopItem) {
     shopcart.cnt += payload.count - payload.lastQuantity;
     shopcart.sum += payload.price * (payload.count - payload.lastQuantity);
     updateItems(shopcart, payload);
@@ -63,4 +61,4 @@ function updateItems(shopcart: ShopCart, payload: ShopItem) {
     }
 
 
-}
+}*/

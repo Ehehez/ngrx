@@ -8,8 +8,9 @@ import { Store } from '@ngrx/store';
 import { ShopcartAction } from 'src/app/models/shopcartAction';
 import { CLEAR, PULL, PUSH } from 'src/app/store/reducers/shopcart.reducer';
 import { ShopCart } from 'src/app/models/ShopCart';
-import { AppState } from 'src/app/store/app.states';
-
+import { AppState, selectShopcartState } from 'src/app/store/app.states';
+import { ShopcartService } from 'src/app/services/shopcart.service';
+import { LandingComponent } from '../landing/landing.component';
 @Component({
   selector: 'product-booking',
   template: `
@@ -34,9 +35,12 @@ export class ProductBookingComponent implements OnInit, OnChanges {
   private shopcart$: Observable<IShopCart>;
   private quantityError = "";
   private lastQuantity = 0;
+
   constructor(
     private router: Router,
     private store: Store<AppState>,
+    private shop: ShopcartService,
+    private landing: LandingComponent
   ) {
     //Create ShopItem
     this.shopItem = new ShopItem();
@@ -83,10 +87,17 @@ export class ProductBookingComponent implements OnInit, OnChanges {
   private sendToCart() {
     let action;
     if (this.shopItem.count < this.lastQuantity) {
-      action = new ShopcartAction(PULL, this.shopItem);
+
+      /*action = new ShopcartAction(PULL, this.shopItem);*/
+      this.landing.shopCart = this.shop.pullFromCart(this.landing.shopCart, this.shopItem);
     } else {
-      action = new ShopcartAction(PUSH, this.shopItem);
+      /*action = new ShopcartAction(PUSH, this.shopItem);*/
+      this.landing.shopCart = this.shop.pushToCart(this.landing.shopCart, this.shopItem);
     }
+
+
+    console.log(this.landing.shopCart);
+    action = new ShopcartAction(PUSH, this.landing.shopCart);
     this.store.dispatch(action);
 
     this.shopItem.lastQuantity = this.shopItem.count;
