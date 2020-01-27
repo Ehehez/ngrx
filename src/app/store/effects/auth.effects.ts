@@ -39,7 +39,6 @@ export class AuthEffects {
                     return new LogInSuccess({ token: user.jwt, email: user.user.email });
                 }))
                 .catch((error) => {
-                    console.log(error);
                     return Observable.of(new LogInFailure({ error: error }));
                 });
         });
@@ -66,11 +65,9 @@ export class AuthEffects {
         .switchMap(payload => {
             return this.authService.signUp(payload.username, payload.email, payload.password)
                 .map((user) => {
-                    /*console.log(user);*/
                     return new SignUpSuccess({ token: user.token, email: payload.email });
                 })
                 .catch((error) => {
-                    /*console.log(error);*/
                     return Observable.of(new SignUpFailure({ error: error }));
                 });
         });

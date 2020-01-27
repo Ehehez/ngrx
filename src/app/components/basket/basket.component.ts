@@ -11,6 +11,7 @@ import { Order } from 'src/app/models/order';
 import { User } from 'src/app/models/user';
 import { LogOut } from 'src/app/store/actions/auth.actions';
 import { CLEAR } from 'src/app/store/reducers/shopcart.reducer';
+import { LandingComponent } from '../landing/landing.component';
 
 @Component({
   selector: 'app-basket',
@@ -27,9 +28,12 @@ export class BasketComponent implements OnInit {
   user = null;
   errorMessage = null;
   public total = 0;
+  cnt;
+  sum;
+
 
   constructor(private store: Store<AppState>, private http: HttpClient,
-    private router: Router, private basket: BasketService
+    private router: Router, private basket: BasketService,
   ) {
     this.getState = this.store.select(selectAuthState);
     this.shopcart$ = this.store.select<IShopCart>(x => x.shopcart);
@@ -40,13 +44,16 @@ export class BasketComponent implements OnInit {
   }
 
   ngOnInit() {
+    let recup = JSON.parse(sessionStorage.getItem('authState'));
+    this.cnt = recup.shopcart.cnt;
+    this.sum = recup.shopcart.sum;
     this.initBooks();
     this.getState.subscribe((state) => {
       this.isAuthenticated = state.isAuthenticated;
-      console.log(state.isAuthenticated);
       /*this.user = state.user;*/
       this.errorMessage = state.errorMessage;
-    })
+    });
+
   }
 
 
@@ -91,14 +98,10 @@ export class BasketComponent implements OnInit {
           else {
             let payload = new Articulo();
             payload.id = parseInt(storeItem.id);
-            console.log(payload.id + " ---------- id");
             payload.name = storeItem.name;
             payload.price = storeItem.price;
-            console.log(storeItem.quantity + "   --- cantidad");
-            console.log(storeItem.count + "     ---- count");
             payload.quantity = storeItem.quantity - storeItem.count;
-            console.log(payload.quantity);
-            this.http.put('http://localhost:1337/articulos/' + payload.id, (payload)).subscribe((ret) => console.log(ret));
+            this.http.put('http://localhost:1337/articulos/' + payload.id, (payload)).subscribe((ret) => ret);
             descrip += storeItem.name + " x " + storeItem.count + " -----> " + storeItem.count * storeItem.price + "€\n";
             this.itemNumbers[item.id] = storeItem.count;
             total += storeItem.price * storeItem.count;

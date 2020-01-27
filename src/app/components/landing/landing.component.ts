@@ -32,7 +32,8 @@ export class LandingComponent implements OnInit, OnChanges {
   private shopcart$: Observable<IShopCart>;
   subs = new Subscription();
   public shopCart = JSON.parse(sessionStorage.getItem('authState.shopcart')) || new ShopCart();
-
+  cnt = 0;
+  sum = 0;
   constructor(
     private router: Router, private http: HttpClient,
     private store: Store<AppState>,
@@ -53,6 +54,7 @@ export class LandingComponent implements OnInit, OnChanges {
     this.shopItem.name = this.product.name;
     this.shopItem.quantity = this.product.quantity;
     this.shopItem.price = this.product.price;
+
   }
 
   ngOnDestroy() {
@@ -69,6 +71,9 @@ export class LandingComponent implements OnInit, OnChanges {
       this.lista = list;
     }));
 
+
+    this.cnt = this.shopCart.cnt;
+    this.sum = this.shopCart.sum;
   }
 
   ngOnLoad() {

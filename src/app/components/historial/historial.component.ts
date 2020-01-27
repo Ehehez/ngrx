@@ -7,6 +7,7 @@ import { BasketService } from 'src/app/services/basket.service';
 import { Order } from 'src/app/models/order';
 import { IShopCart } from 'src/app/interfaces/IShopCart';
 import { LogOut } from 'src/app/store/actions/auth.actions';
+import { LandingComponent } from '../landing/landing.component';
 
 @Component({
   selector: 'app-historial',
@@ -20,15 +21,20 @@ export class HistorialComponent implements OnInit {
   getState;
   shopcart$;
   user;
+  cnt;
+  sum;
 
   constructor(private store: Store<AppState>, private http: HttpClient,
-    private router: Router, private basket: BasketService) {
+    private router: Router, private basket: BasketService, ) {
     this.getState = this.store.select('authState');
     this.shopcart$ = this.store.select<IShopCart>(x => x.shopcart);
     this.user = sessionStorage.getItem("user");
   }
 
   ngOnInit() {
+    let recup = JSON.parse(sessionStorage.getItem('authState'));
+    this.cnt = recup.shopcart.cnt;
+    this.sum = recup.shopcart.sum;
     this.http.get<Order[]>('http://localhost:1337/carritos').subscribe((data) => {
       data.forEach(orden => {
         if (orden.Comprador == this.user) {
@@ -36,7 +42,6 @@ export class HistorialComponent implements OnInit {
         }
       })
     })
-    console.log(this.getState);
   }
 
   goToProducts() {
@@ -51,11 +56,11 @@ export class HistorialComponent implements OnInit {
     this.store.dispatch(new LogOut);
   }
 
-  vertd(id) {
+  /*vertd(id) {
     if (document.getElementById(id).getAttribute('class') == "invisible") {
       document.getElementById(id).setAttribute('class', 'visible');
     } else document.getElementById(id).setAttribute('class', 'invisible');
-  }
+  }*/
 }
 
 

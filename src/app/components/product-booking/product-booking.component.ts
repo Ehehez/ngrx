@@ -56,6 +56,7 @@ export class ProductBookingComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.numero(this.articulo.id);
+    this.shopItem.lastQuantity = this.shopItem.count;
   }
   private increment() {
 
@@ -86,20 +87,22 @@ export class ProductBookingComponent implements OnInit, OnChanges {
 
   private sendToCart() {
     let action;
-    if (this.shopItem.count < this.lastQuantity) {
-
+    if (this.shopItem.count < this.shopItem.lastQuantity) {
       /*action = new ShopcartAction(PULL, this.shopItem);*/
       this.landing.shopCart = this.shop.pullFromCart(this.landing.shopCart, this.shopItem);
-    } else {
+    } else if (this.shopItem.count == this.shopItem.lastQuantity) {
+    }
+    else {
       /*action = new ShopcartAction(PUSH, this.shopItem);*/
       this.landing.shopCart = this.shop.pushToCart(this.landing.shopCart, this.shopItem);
     }
 
 
-    console.log(this.landing.shopCart);
     action = new ShopcartAction(PUSH, this.landing.shopCart);
     this.store.dispatch(action);
 
+    this.landing.cnt = this.landing.shopCart.cnt;
+    this.landing.sum = this.landing.shopCart.sum;
     this.shopItem.lastQuantity = this.shopItem.count;
   }
 

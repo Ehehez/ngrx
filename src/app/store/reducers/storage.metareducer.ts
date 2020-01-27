@@ -27,7 +27,6 @@ export function storageMetaReducer<S, A extends Action = Action>(reducer: Action
         // save the next state to the application storage.
         const stateToSave = pick(nextState, stateKeys);
         setSavedState(stateToSave, localStorageKey);
-        console.log(nextState);
         return nextState;
     };
 }

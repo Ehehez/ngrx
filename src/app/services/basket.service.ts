@@ -10,7 +10,6 @@ export class BasketService {
   constructor(private http: HttpClient) { }
 
   saveOrder(orden: Order) {
-    console.log(JSON.stringify(orden));
     return this.http.post('http://localhost:1337/carritos', (orden));
   }
 
