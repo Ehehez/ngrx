@@ -5,7 +5,7 @@
         <i class="fa fa-shopping-cart "></i> Basket </button>
 
     <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
-    <button class="btn btn-primary-outline float-right" [disabled]="true" (click)="logOut()">Logeado como
+    <button class="btn btn-primary-outline float-right" [disabled]="true">Logeado como
         {{user}}</button>
 </div>
 <div>
@@ -19,7 +19,7 @@
                 <th>ID</th>
                 <th>Fecha</th>
                 <th>Coste</th>
-                <th colspan="2">Detalles</th>
+                <th>Detalles</th>
             </tr>
         </thead>
         <tbody>
@@ -27,9 +27,11 @@
                 <td>{{compra.id}}</td>
                 <td>{{compra.fechaCompra}}</td>
                 <td>{{compra.coste}}</td>
-                <td>
+                <td><button class="btn btn-primary" (click)="vertd(compra.id)">Ver Detalles</button></td>
+                <td class="invisible" id="{{compra.id}}">
                     <pre>{{compra.Descripcion}}</pre>
                 </td>
+
             </tr>
         </tbody>
     </table>

@@ -10,7 +10,7 @@
         <i class="fa fa-save"></i> Send Order </button>
 
     <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
-    <button class="btn btn-primary-outline float-right" [disabled]="true" (click)="logOut()">Logeado como
+    <button class="btn btn-primary-outline float-right" [disabled]="true">Logeado como
         {{user}}</button>
 </div>
 <div>
@@ -18,7 +18,7 @@
     <br>
 </div>
 
-<div id="basket">
+<div id=" basket">
     <table class="table table-inverse" *ngIf="(shopcart$ | async).items.length > 0; else vacio">
         <thead>
             <tr>

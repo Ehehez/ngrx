@@ -49,6 +49,11 @@ export class HistorialComponent implements OnInit {
     this.store.dispatch(new LogOut);
   }
 
+  vertd(id) {
+    if (document.getElementById(id).getAttribute('class') == "invisible") {
+      document.getElementById(id).setAttribute('class', 'visible');
+    } else document.getElementById(id).setAttribute('class', 'invisible');
+  }
 }
 
 
