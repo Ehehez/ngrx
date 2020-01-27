@@ -1,6 +1,10 @@
 <div>
+
+    <button class="btn btn-default" alignment="right">
+        <i class="fa fa-snowflake-o"></i> Productos </button>
+
     <button class="btn btn-default" id="botBasket" (click)="goToBasket()">
-        <i class="fa fa-shopping-cart "></i> Basket </button>
+        <i class="fa fa-shopping-cart "></i> Carrito ({{counter}})</button>
 
     <button class="btn btn-default" (click)="goToHistorial()">
         <i class="fa fa-list"></i> Historial </button>
@@ -25,10 +29,10 @@
             </tr>
         </thead>
         <tr *ngFor="let list of lista">
-            <td>{{list.id}}</td>
+            <td class="text-center">{{list.id}}</td>
             <td>{{list.name}}</td>
-            <td>{{list.price}}</td>
-            <td>{{list.quantity}}</td>
+            <td class="text-center">{{list.price}}</td>
+            <td class="text-center">{{list.quantity}}</td>
             <td class="text-center">
                 <product-booking [product]="list" (emit-events)="setShopCart($event)">
                 </product-booking>

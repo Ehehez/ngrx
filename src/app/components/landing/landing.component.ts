@@ -1,13 +1,13 @@
 import { Input, OnInit, OnChanges, Component } from '@angular/core';
 import { Articulo } from 'src/app/models/articulo';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ShopItem } from 'src/app/models/shopItem';
 import { AppState } from 'src/app/store/app.states';
 import { Store } from '@ngrx/store';
 import { IShopCart } from 'src/app/interfaces/IShopCart';
-import { count } from 'rxjs/operators';
+import { count, subscribeOn } from 'rxjs/operators';
 import { LogOut } from 'src/app/store/actions/auth.actions';
 
 
@@ -21,7 +21,7 @@ export class LandingComponent implements OnInit, OnChanges {
   @Input('product') product: Articulo;
   @Input('default-number') defaultNumber: number;
 
-  private counter: number = 0;
+  private counter: String = "";
   private shopItem: Articulo = null;
   private lista: Articulo;
   getState: Observable<any>;
@@ -29,6 +29,7 @@ export class LandingComponent implements OnInit, OnChanges {
   user = null;
   errorMessage = null;
   private shopcart$: Observable<IShopCart>;
+  subs = new Subscription();
 
   constructor(
     private router: Router, private http: HttpClient,
@@ -51,11 +52,15 @@ export class LandingComponent implements OnInit, OnChanges {
     this.shopItem.price = this.product.price;
   }
 
+  ngOnDestroy() {
+    this.subs.unsubscribe;
+  }
+
   ngOnInit() {
 
-    this.http.get<Articulo>('http://localhost:1337/articulos').subscribe(list => {
+    this.subs.add(this.http.get<Articulo>('http://localhost:1337/articulos').subscribe(list => {
       this.lista = list;
-    });
+    }));
   }
 
 

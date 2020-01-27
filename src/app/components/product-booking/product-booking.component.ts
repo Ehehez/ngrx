@@ -13,16 +13,15 @@ import { AppState } from 'src/app/store/app.states';
 @Component({
   selector: 'product-booking',
   template: `
-              <div>
-               <table>
+               <table style="margin: 0 auto; width:100%">
                  <tr>
                    <td (click)="decrement()"><label style="min-width:25px"><i class="fa fa-minus"></i></label></td>
-                   <td><input style="max-width:50px" readonly="readonly" type="text" value="{{shopItem.count}}"/></td>
+                   <td class="text-center"><input style="max-width:50px" readonly="readonly" type="text" class="text-center" value="{{shopItem.count}}"/></td>
                    <td (click)="increment()" id="{{shopItem.id}}"><label style="min-width:25px"><i class="fa fa-plus"></i></label></td>
+                   <td colspan="3"><button (click)="sendToCart()" class="btn btn-outline-primary">Enviar al carro</button></td>
                  </tr>
                  
                </table>
-               </div>
               `
 })
 export class ProductBookingComponent implements OnInit, OnChanges {
@@ -34,10 +33,10 @@ export class ProductBookingComponent implements OnInit, OnChanges {
   private shopItem: ShopItem = null;
   private shopcart$: Observable<IShopCart>;
   private quantityError = "";
-
+  private lastQuantity = 0;
   constructor(
     private router: Router,
-    private store: Store<AppState>
+    private store: Store<AppState>,
   ) {
     //Create ShopItem
     this.shopItem = new ShopItem();
@@ -62,8 +61,8 @@ export class ProductBookingComponent implements OnInit, OnChanges {
     else {
       document.getElementById(this.shopItem.id).removeAttribute("disabled");
       this.shopItem.count += 1;
-      let action = new ShopcartAction(PUSH, this.shopItem);
-      this.store.dispatch(action);
+
+
     }
 
 
@@ -72,7 +71,7 @@ export class ProductBookingComponent implements OnInit, OnChanges {
   private decrement() {
     if (this.shopItem.count > 0) {
       this.shopItem.count -= 1;
-      this.store.dispatch({ type: PULL, payload: this.shopItem });
+      /* this.store.dispatch({ type: PULL, payload: this.shopItem });*/
     }
   }
 
@@ -80,6 +79,19 @@ export class ProductBookingComponent implements OnInit, OnChanges {
     this.shopItem.count = 0;
     this.store.dispatch({ type: CLEAR });
   }
+
+  private sendToCart() {
+    let action;
+    if (this.shopItem.count < this.lastQuantity) {
+      action = new ShopcartAction(PULL, this.shopItem);
+    } else {
+      action = new ShopcartAction(PUSH, this.shopItem);
+    }
+    this.store.dispatch(action);
+
+    this.shopItem.lastQuantity = this.shopItem.count;
+  }
+
 
   numero(id) {
     this.shopcart$.forEach(x => {

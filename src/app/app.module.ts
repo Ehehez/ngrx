@@ -21,7 +21,8 @@ import { ProductBookingComponent } from './components/product-booking/product-bo
 import { BasketService } from './services/basket.service';
 import { HistorialComponent } from './components/historial/historial.component';
 import { storageMetaReducer } from './store/reducers/storage.metareducer';
-
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ShopcartService } from './services/shopcart.service';
 
 @NgModule({
   declarations: [
@@ -40,11 +41,13 @@ import { storageMetaReducer } from './store/reducers/storage.metareducer';
     HttpClientModule,
     EffectsModule.forRoot([AuthEffects]),
     StoreModule.forRoot(reducers, { metaReducers: [storageMetaReducer] }),
-    AngularFontAwesomeModule
+    AngularFontAwesomeModule,
+    NgbModule
   ],
   providers: [AuthService,
     AuthGuardService,
     BasketService,
+    ShopcartService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

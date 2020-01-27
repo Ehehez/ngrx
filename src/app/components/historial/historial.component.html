@@ -2,8 +2,10 @@
     <button class="btn btn-default" (click)="goToProducts()" alignment="right">
         <i class="fa fa-snowflake-o"></i> Productos </button>
     <button class="btn btn-default" id="botBasket" (click)="goToBasket()">
-        <i class="fa fa-shopping-cart "></i> Basket </button>
+        <i class="fa fa-shopping-cart "></i> Carrito </button>
 
+    <button class="btn btn-default" (click)="goToHistorial()">
+        <i class="fa fa-list"></i> Historial </button>
     <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
     <button class="btn btn-primary-outline float-right" [disabled]="true">Logeado como
         {{user}}</button>
@@ -27,9 +29,14 @@
                 <td>{{compra.id}}</td>
                 <td>{{compra.fechaCompra}}</td>
                 <td>{{compra.coste}}</td>
-                <td><button class="btn btn-primary" (click)="vertd(compra.id)">Ver Detalles</button></td>
-                <td class="invisible" id="{{compra.id}}">
-                    <pre>{{compra.Descripcion}}</pre>
+                <td>
+                    <div ngbDropdown class="d-inline-block">
+                        <button class="btn btn-outline-primary" id="{{compra.id}}" ngbDropdownToggle>Ver Más</button>
+                        <div ngbDropdownMenu>
+                            <button ngbDropdownItem>
+                                <pre>{{compra.Descripcion}}</pre></button>
+                        </div>
+                    </div>
                 </td>
 
             </tr>

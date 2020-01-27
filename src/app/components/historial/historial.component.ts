@@ -31,7 +31,9 @@ export class HistorialComponent implements OnInit {
   ngOnInit() {
     this.http.get<Order[]>('http://localhost:1337/carritos').subscribe((data) => {
       data.forEach(orden => {
-        this.compras.push(orden);
+        if (orden.Comprador == this.user) {
+          this.compras.push(orden);
+        }
       })
     })
     console.log(this.getState);

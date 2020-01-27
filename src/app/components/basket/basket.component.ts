@@ -27,7 +27,6 @@ export class BasketComponent implements OnInit {
   user = null;
   errorMessage = null;
   public total = 0;
-  enviado = false;
 
   constructor(private store: Store<AppState>, private http: HttpClient,
     private router: Router, private basket: BasketService
@@ -81,6 +80,7 @@ export class BasketComponent implements OnInit {
 
   saveOrder() {
     let descrip = "";
+    let total = 0;
     this.shopcart$.subscribe(cart => {
       this.lista.forEach(item => {
         if (cart.items) {
@@ -99,13 +99,13 @@ export class BasketComponent implements OnInit {
             payload.quantity = storeItem.quantity - storeItem.count;
             console.log(payload.quantity);
             this.http.put('http://localhost:1337/articulos/' + payload.id, (payload)).subscribe((ret) => console.log(ret));
-            descrip += storeItem.name + "x" + storeItem.count + "-----> " + storeItem.count * storeItem.price + "€\n";
+            descrip += storeItem.name + " x " + storeItem.count + " -----> " + storeItem.count * storeItem.price + "€\n";
             this.itemNumbers[item.id] = storeItem.count;
-            this.total += storeItem.price * storeItem.count;
+            total += storeItem.price * storeItem.count;
           }
         }
       });
-      descrip += "Total = " + this.total + "€";
+      descrip += "Total = " + total + "€";
       let payload = new Order();
       payload.Comprador = sessionStorage.getItem('user');
       payload.coste = this.total;
@@ -115,7 +115,6 @@ export class BasketComponent implements OnInit {
       let ret;
       this.basket.saveOrder(payload).subscribe((data) => {
       });
-      this.enviado = true;
       this.store.dispatch({ type: CLEAR });
       this.router.navigateByUrl('/historial');
       return ret;

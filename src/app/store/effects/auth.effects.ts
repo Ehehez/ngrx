@@ -17,7 +17,6 @@ import {
     LogOut,
     GetStatus
 } from '../actions/auth.actions';
-import { User } from '../../models/user';
 
 @Injectable()
 export class AuthEffects {
@@ -36,6 +35,7 @@ export class AuthEffects {
         .switchMap(payload => {
             return this.authService.logIn(payload.identifier, payload.password)
                 .pipe(map((user) => {
+
                     return new LogInSuccess({ token: user.jwt, email: user.user.email });
                 }))
                 .catch((error) => {

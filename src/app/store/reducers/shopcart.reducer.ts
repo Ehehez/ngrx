@@ -34,15 +34,15 @@ export interface State {
 }
 
 export function pushToCart(shopcart: ShopCart, payload: ShopItem) {
-    shopcart.cnt += 1;
-    shopcart.sum += payload.price * 1;
+    shopcart.cnt += payload.count - payload.lastQuantity;
+    shopcart.sum += payload.price * (payload.count - payload.lastQuantity);
     updateItems(shopcart, payload);
     return shopcart;
 }
 
 export function pullFromCart(shopcart: ShopCart, payload: ShopItem) {
-    shopcart.cnt -= 1;
-    shopcart.sum -= payload.price * 1;
+    shopcart.cnt -= payload.lastQuantity - payload.count;
+    shopcart.sum -= payload.price * (payload.lastQuantity - payload.count);
     updateItems(shopcart, payload);
     return shopcart;
 }

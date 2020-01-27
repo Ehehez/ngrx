@@ -1,7 +1,7 @@
 export class Articulo {
-    id?: any;
+    id: any;
     name?: string;
-    price?: any;
-    quantity?: number;
+    price: any;
+    quantity: number;
 }
 
