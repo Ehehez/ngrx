@@ -4,7 +4,7 @@
         <i class="fa fa-snowflake-o"></i> Productos </button>
 
     <button class="btn btn-default" id="botBasket">
-        <i class="fa fa-shopping-cart "></i> Carrito ({{cnt}}) {{sum}}€</button>
+        <i class="fa fa-shopping-cart "></i> Carrito ({{state.shopcart.cnt}}) {{state.shopcart.sum}}€</button>
 
 
     <button class="btn btn-default" (click)="goToHistorial()">

@@ -2,18 +2,13 @@ import { Action, ActionReducer } from '@ngrx/store';
 import { IShopCart } from '../../interfaces/IShopCart';
 import { ShopCart } from '../../models/ShopCart';
 import { ShopcartAction } from 'src/app/models/shopcartAction';
+import { All, ShopcartActionTypes } from '../actions/shopcart.actions';
 
-export const PUSH = 'PUSH';
-export const PULL = 'PULL';
-export const CLEAR = 'CLEAR';
-
-export const shopcartReducer: ActionReducer<IShopCart> = (state: ShopCart = new ShopCart(), action: ShopcartAction) => {
+export const shopcartReducer: ActionReducer<IShopCart> = (state: ShopCart = new ShopCart(), action: All) => {
     switch (action.type) {
-        case PUSH:
+        case ShopcartActionTypes.PULL:
             return state = action.payload;
-        case PULL:
-            return state = action.payload;
-        case CLEAR:
+        case ShopcartActionTypes.CLEAR:
             state.items = [];
             state.cnt = 0;
             state.sum = 0;

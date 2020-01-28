@@ -1,15 +1,13 @@
-import { Input, OnInit, OnChanges, Component } from '@angular/core';
+import { Input, OnInit, OnChanges, Component, OnDestroy } from '@angular/core';
 import { Articulo } from 'src/app/models/articulo';
 import { Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { ShopItem } from 'src/app/models/shopItem';
 import { AppState } from 'src/app/store/app.states';
 import { Store } from '@ngrx/store';
 import { IShopCart } from 'src/app/interfaces/IShopCart';
-import { count, subscribeOn } from 'rxjs/operators';
 import { LogOut } from 'src/app/store/actions/auth.actions';
-import { ShopCart } from 'src/app/models/ShopCart';
+import { AccesoBDService } from '../../services/acceso-bd.service';
 
 
 @Component({
@@ -17,7 +15,7 @@ import { ShopCart } from 'src/app/models/ShopCart';
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.css']
 })
-export class LandingComponent implements OnInit, OnChanges {
+export class LandingComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input('product') product: Articulo;
   @Input('default-number') defaultNumber: number;
@@ -31,19 +29,16 @@ export class LandingComponent implements OnInit, OnChanges {
   errorMessage = null;
   private shopcart$: Observable<IShopCart>;
   subs = new Subscription();
-  public shopCart = JSON.parse(sessionStorage.getItem('authState.shopcart')) || new ShopCart();
-  cnt = 0;
-  sum = 0;
+  state;
   constructor(
     private router: Router, private http: HttpClient,
-    private store: Store<AppState>,
+    private store: Store<AppState>, private bd: AccesoBDService
   ) {
-    //Create ShopItem
 
     this.shopItem = new Articulo();
     this.getState = this.store.select((state) => { return state.authState; })
-    this.shopcart$ = this.store.select((state) => { return state.shopcart; })
-    this.user = sessionStorage.getItem('user');
+    /*this.shopcart$ = this.store.select((state) => { return state.shopcart; })*/
+    store.subscribe(o => this.state = o);
   }
 
 
@@ -54,7 +49,7 @@ export class LandingComponent implements OnInit, OnChanges {
     this.shopItem.name = this.product.name;
     this.shopItem.quantity = this.product.quantity;
     this.shopItem.price = this.product.price;
-
+    this.subs.add(this.store.subscribe(o => this.state = o));
   }
 
   ngOnDestroy() {
@@ -62,25 +57,14 @@ export class LandingComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    let a = (JSON.parse(sessionStorage.getItem('authState')));
-    if (a) {
-      this.shopCart = a.shopcart;
-    } else this.shopCart = new ShopCart();
 
-    this.subs.add(this.http.get<Articulo>('http://localhost:1337/articulos').subscribe(list => {
+    this.user = this.state.auth.user.email;
+    this.subs.add(this.bd.getArticulos().subscribe(list => {
       this.lista = list;
     }));
 
-
-    this.cnt = this.shopCart.cnt;
-    this.sum = this.shopCart.sum;
   }
 
-  ngOnLoad() {
-    if (JSON.parse(sessionStorage.getItem('authState.shopcart'))) {
-      this.shopCart = JSON.parse(sessionStorage.getItem('authState.shopcart'));
-    } else this.shopCart = new ShopCart();
-  }
   logOut() {
     this.store.dispatch(new LogOut);
   }

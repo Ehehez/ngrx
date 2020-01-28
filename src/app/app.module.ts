@@ -24,6 +24,9 @@ import { storageMetaReducer } from './store/reducers/storage.metareducer';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ShopcartService } from './services/shopcart.service';
 
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { AccesoBDService } from './services/acceso-bd.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,6 +44,9 @@ import { ShopcartService } from './services/shopcart.service';
     HttpClientModule,
     EffectsModule.forRoot([AuthEffects]),
     StoreModule.forRoot(reducers, { metaReducers: [storageMetaReducer] }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 10
+    }),
     AngularFontAwesomeModule,
     NgbModule
   ],
@@ -48,6 +54,7 @@ import { ShopcartService } from './services/shopcart.service';
     AuthGuardService,
     BasketService,
     ShopcartService,
+    AccesoBDService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

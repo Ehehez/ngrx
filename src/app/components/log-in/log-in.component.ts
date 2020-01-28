@@ -5,7 +5,8 @@ import { User } from '../../models/user';
 import { AppState, selectAuthState } from '../../store/app.states';
 import { LogIn } from '../../store/actions/auth.actions';
 import { Observable } from 'rxjs';
-import { CLEAR } from 'src/app/store/reducers/shopcart.reducer';
+import { ShopcartActionTypes } from 'src/app/store/actions/shopcart.actions';
+
 
 
 @Component({
@@ -37,7 +38,7 @@ export class LogInComponent implements OnInit {
       password: this.user.password
     };
 
-    this.store.dispatch({ type: CLEAR });
+    this.store.dispatch({ type: ShopcartActionTypes.CLEAR });
     this.store.dispatch(new LogIn(payload));
   }
 

@@ -2,10 +2,10 @@ import { ActionReducer, Action } from '@ngrx/store';
 import { merge, pick } from 'lodash-es';
 
 function setSavedState(state: any, localStorageKey: string) {
-    sessionStorage.setItem(localStorageKey, JSON.stringify(state));
+    localStorage.setItem(localStorageKey, JSON.stringify(state));
 }
 function getSavedState(localStorageKey: string): any {
-    return JSON.parse(sessionStorage.getItem(localStorageKey));
+    return JSON.parse(localStorage.getItem(localStorageKey));
 }
 
 // the keys from state which we'd like to save.

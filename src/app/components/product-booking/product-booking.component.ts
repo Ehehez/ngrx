@@ -1,23 +1,22 @@
-import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ShopItem } from '../../models/shopItem';
 import { Articulo } from '../../models/articulo';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { IShopCart } from 'src/app/interfaces/IShopCart';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ShopcartAction } from 'src/app/models/shopcartAction';
-import { CLEAR, PULL, PUSH } from 'src/app/store/reducers/shopcart.reducer';
+import { ShopcartActionTypes } from 'src/app/store/actions/shopcart.actions';
 import { ShopCart } from 'src/app/models/ShopCart';
 import { AppState, selectShopcartState } from 'src/app/store/app.states';
 import { ShopcartService } from 'src/app/services/shopcart.service';
-import { LandingComponent } from '../landing/landing.component';
 @Component({
   selector: 'product-booking',
   template: `
                <table style="margin: 0 auto; width:100%">
                  <tr>
                    <td (click)="decrement()"><label style="min-width:25px"><i class="fa fa-minus"></i></label></td>
-                   <td class="text-center"><input style="max-width:50px" readonly="readonly" type="text" class="text-center" value="{{shopItem.count}}"/></td>
+                   <td class="text-center"><input style="max-width:50px" type="text" id="{{shopItem.id}}" (change)="changes(shopItem.id)" class="text-center" value="{{shopItem.count}}"/></td>
                    <td (click)="increment()" id="{{shopItem.id}}"><label style="min-width:25px"><i class="fa fa-plus"></i></label></td>
                    <td colspan="3"><button (click)="sendToCart()" class="btn btn-outline-primary">Enviar al carro</button></td>
                  </tr>
@@ -25,7 +24,7 @@ import { LandingComponent } from '../landing/landing.component';
                </table>
               `
 })
-export class ProductBookingComponent implements OnInit, OnChanges {
+export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input('product') articulo: Articulo;
   @Input('default-number') defaultNumber: number;
@@ -35,16 +34,20 @@ export class ProductBookingComponent implements OnInit, OnChanges {
   private shopcart$: Observable<IShopCart>;
   private quantityError = "";
   private lastQuantity = 0;
+  private state;
+  subs = new Subscription();
+
 
   constructor(
     private router: Router,
     private store: Store<AppState>,
     private shop: ShopcartService,
-    private landing: LandingComponent
   ) {
     //Create ShopItem
     this.shopItem = new ShopItem();
     this.shopcart$ = store.select<IShopCart>(x => x.shopcart);
+    this.subs.add(store.take(1).subscribe(o => this.state = o));
+
 
   }
   public ngOnChanges() {
@@ -61,10 +64,8 @@ export class ProductBookingComponent implements OnInit, OnChanges {
   private increment() {
 
     if (this.shopItem.count + 1 > this.articulo.quantity) {
-      document.getElementById(this.shopItem.id).setAttribute("disabled", "disabled");
     }
     else {
-      document.getElementById(this.shopItem.id).removeAttribute("disabled");
       this.shopItem.count += 1;
 
 
@@ -76,33 +77,25 @@ export class ProductBookingComponent implements OnInit, OnChanges {
   private decrement() {
     if (this.shopItem.count > 0) {
       this.shopItem.count -= 1;
-      /* this.store.dispatch({ type: PULL, payload: this.shopItem });*/
     }
   }
 
-  private reset() {
-    this.shopItem.count = 0;
-    this.store.dispatch({ type: CLEAR });
-  }
 
   private sendToCart() {
     let action;
     if (this.shopItem.count < this.shopItem.lastQuantity) {
       /*action = new ShopcartAction(PULL, this.shopItem);*/
-      this.landing.shopCart = this.shop.pullFromCart(this.landing.shopCart, this.shopItem);
-    } else if (this.shopItem.count == this.shopItem.lastQuantity) {
+      this.state.shopcart = this.shop.pullFromCart(this.state.shopcart, this.shopItem);
+    } else if (this.shopItem.count == this.state.shopcart.lastQuantity) {
     }
     else {
       /*action = new ShopcartAction(PUSH, this.shopItem);*/
-      this.landing.shopCart = this.shop.pushToCart(this.landing.shopCart, this.shopItem);
+      this.state.shopcart = this.shop.pushToCart(this.state.shopcart, this.shopItem);
     }
 
 
-    action = new ShopcartAction(PUSH, this.landing.shopCart);
+    action = new ShopcartAction(ShopcartActionTypes.PULL, this.state.shopcart);
     this.store.dispatch(action);
-
-    this.landing.cnt = this.landing.shopCart.cnt;
-    this.landing.sum = this.landing.shopCart.sum;
     this.shopItem.lastQuantity = this.shopItem.count;
   }
 
@@ -118,5 +111,18 @@ export class ProductBookingComponent implements OnInit, OnChanges {
       })
     })
     return 0;
+  }
+
+  changes(id) {
+    let a = parseInt((<HTMLInputElement>document.getElementById(id)).value);
+    if (a <= this.shopItem.quantity) {
+      this.shopItem.count = a;
+    } else {
+      document.getElementById(id).value = this.shopItem.count;
+    }
+  }
+
+  ngOnDestroy() {
+    this.subs.unsubscribe();
   }
 }

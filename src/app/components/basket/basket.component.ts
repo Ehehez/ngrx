@@ -1,25 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AppState, selectAuthState } from 'src/app/store/app.states';
 import { HttpClient } from '@angular/common/http';
 import { Articulo } from 'src/app/models/articulo';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { IShopCart } from 'src/app/interfaces/IShopCart';
 import { Router } from '@angular/router';
 import { BasketService } from 'src/app/services/basket.service';
 import { Order } from 'src/app/models/order';
-import { User } from 'src/app/models/user';
 import { LogOut } from 'src/app/store/actions/auth.actions';
-import { CLEAR } from 'src/app/store/reducers/shopcart.reducer';
-import { LandingComponent } from '../landing/landing.component';
+import { AccesoBDService } from 'src/app/services/acceso-bd.service';
+import { ShopcartActionTypes } from 'src/app/store/actions/shopcart.actions';
 
 @Component({
   selector: 'app-basket',
   templateUrl: './basket.component.html',
   styleUrls: ['./basket.component.css']
 })
-export class BasketComponent implements OnInit {
+export class BasketComponent implements OnInit, OnDestroy {
 
+  private subs = new Subscription();
   public lista;
   private shopcart$: Observable<IShopCart>;
   private itemNumbers: any;
@@ -30,37 +30,34 @@ export class BasketComponent implements OnInit {
   public total = 0;
   cnt;
   sum;
+  state;
 
 
   constructor(private store: Store<AppState>, private http: HttpClient,
-    private router: Router, private basket: BasketService,
+    private router: Router, private basket: BasketService, private bd: AccesoBDService
   ) {
     this.getState = this.store.select(selectAuthState);
     this.shopcart$ = this.store.select<IShopCart>(x => x.shopcart);
     this.itemNumbers = {};
-
-    this.user = sessionStorage.getItem('user');
+    store.take(1).subscribe(o => this.state = o);
+    /*this.user = localStorage.getItem('user');*/
 
   }
 
   ngOnInit() {
-    let recup = JSON.parse(sessionStorage.getItem('authState'));
-    this.cnt = recup.shopcart.cnt;
-    this.sum = recup.shopcart.sum;
     this.initBooks();
-    this.getState.subscribe((state) => {
+    this.subs.add(this.getState.subscribe((state) => {
       this.isAuthenticated = state.isAuthenticated;
-      /*this.user = state.user;*/
       this.errorMessage = state.errorMessage;
-    });
-
+    }));
+    this.user = this.state.auth.user.email;
   }
 
 
   private initBooks() {
-    this.http.get<Articulo>('http://localhost:1337/articulos').subscribe(list => {
+    this.subs.add(this.bd.getArticulos().subscribe(list => {
       this.lista = list;
-      this.shopcart$.subscribe(cart => {
+      this.subs.add(this.shopcart$.subscribe(cart => {
         this.lista.forEach(item => {
           if (cart.items) {
             let storeItem = cart.items.find(x => x.id === item.id);
@@ -74,7 +71,8 @@ export class BasketComponent implements OnInit {
           }
         });
       })
-    })
+      )
+    }))
   }
 
   goToProducts() {
@@ -88,7 +86,7 @@ export class BasketComponent implements OnInit {
   saveOrder() {
     let descrip = "";
     let total = 0;
-    this.shopcart$.subscribe(cart => {
+    this.subs.add(this.shopcart$.subscribe(cart => {
       this.lista.forEach(item => {
         if (cart.items) {
           let storeItem = cart.items.find(x => x.id === item.id);
@@ -101,7 +99,7 @@ export class BasketComponent implements OnInit {
             payload.name = storeItem.name;
             payload.price = storeItem.price;
             payload.quantity = storeItem.quantity - storeItem.count;
-            this.http.put('http://localhost:1337/articulos/' + payload.id, (payload)).subscribe((ret) => ret);
+            this.bd.setArticulo(payload);
             descrip += storeItem.name + " x " + storeItem.count + " -----> " + storeItem.count * storeItem.price + "€\n";
             this.itemNumbers[item.id] = storeItem.count;
             total += storeItem.price * storeItem.count;
@@ -110,22 +108,27 @@ export class BasketComponent implements OnInit {
       });
       descrip += "Total = " + total + "€";
       let payload = new Order();
-      payload.Comprador = sessionStorage.getItem('user');
+      payload.Comprador = localStorage.getItem('user');
       payload.coste = this.total;
       payload.Descripcion = descrip;
       let date = new Date();
       payload.fechaCompra = date.toDateString();
       let ret;
-      this.basket.saveOrder(payload).subscribe((data) => {
-      });
-      this.store.dispatch({ type: CLEAR });
+      this.subs.add(this.basket.saveOrder(payload).subscribe((data) => {
+      }));
+      this.store.dispatch({ type: ShopcartActionTypes.CLEAR });
       this.router.navigateByUrl('/historial');
       return ret;
-    })
+    }))
   }
 
+  ngOnDestroy() {
+    this.subs.unsubscribe();
+  }
   logOut() {
     this.store.dispatch(new LogOut);
   }
+
 }
+
 
