@@ -11,7 +11,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~8.2.14",
+    "@angular/animations": "^8.2.14",
     "@angular/common": "~8.2.14",
     "@angular/compiler": "~8.2.14",
     "@angular/core": "~8.2.14",
@@ -28,7 +28,7 @@
     "font-awesome": "^4.7.0",
     "git": "^0.1.5",
     "lodash-es": "^4.17.15",
-    "ng-toastr": "^1.0.0",
+    "ngx-toastr": "^11.3.2",
     "rxjs": "~6.4.0",
     "rxjs-compat": "^6.5.4",
     "tslib": "^1.10.0",

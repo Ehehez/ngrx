@@ -6,8 +6,9 @@ import { Router } from '@angular/router';
 import { BasketService } from 'src/app/services/basket.service';
 import { Order } from 'src/app/models/order';
 import { IShopCart } from 'src/app/interfaces/IShopCart';
-import { LogOut } from 'src/app/store/actions/auth.actions';
+import { LogOut } from 'src/app/store/auth/auth.actions';
 import { Subscription } from 'rxjs';
+import { AccesoBDService } from 'src/app/services/acceso-bd.service';
 
 @Component({
   selector: 'app-historial',
@@ -25,23 +26,24 @@ export class HistorialComponent implements OnInit, OnDestroy {
   state;
 
   constructor(private store: Store<AppState>, private http: HttpClient,
-    private router: Router, private basket: BasketService, ) {
-    this.getState = this.store.select('authState');
+    private router: Router, private basket: BasketService,
+    private bd: AccesoBDService) {
+    this.getState = this.store.select('auth');
     this.shopcart$ = this.store.select<IShopCart>(x => x.shopcart);
-    this.user = localStorage.getItem("user");
-
     store.take(1).subscribe(o => this.state = o);
   }
 
   ngOnInit() {
-
-    this.subs.add(this.http.get<Order[]>('http://localhost:1337/carritos').subscribe((data) => {
+    this.user = this.state.auth.user.email;
+    console.log(this.user);
+    this.subs.add(this.bd.getOrders().subscribe((data) => {
       data.forEach(orden => {
         if (orden.Comprador == this.user) {
           this.compras.push(orden);
         }
       })
     }));
+    console.log(this.compras);
   }
 
   goToProducts() {

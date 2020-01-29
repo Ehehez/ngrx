@@ -3,9 +3,10 @@ import { Store } from '@ngrx/store';
 
 import { User } from '../../models/user';
 import { AppState, selectAuthState } from '../../store/app.states';
-import { LogIn } from '../../store/actions/auth.actions';
-import { Observable } from 'rxjs';
-import { ShopcartActionTypes } from 'src/app/store/actions/shopcart.actions';
+import { LogIn } from '../../store/auth/auth.actions';
+import { Observable, Subscription } from 'rxjs';
+import { ShopcartActionTypes } from 'src/app/store/shopcart/shopcart.actions';
+import { Router } from '@angular/router';
 
 
 
@@ -19,17 +20,20 @@ export class LogInComponent implements OnInit {
   user: User = new User();
   getState: Observable<any>;
   errorMessage: string | null;
+  subs = new Subscription();
+
 
   constructor(
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private router: Router
   ) {
     this.getState = this.store.select(selectAuthState);
   }
 
   ngOnInit() {
-    this.getState.subscribe((state) => {
+    this.subs.add(this.getState.subscribe((state) => {
       this.errorMessage = state.errorMessage;
-    });
+    }));
   };
 
   onSubmit(): void {
@@ -40,6 +44,12 @@ export class LogInComponent implements OnInit {
 
     this.store.dispatch({ type: ShopcartActionTypes.CLEAR });
     this.store.dispatch(new LogIn(payload));
+    let a = this.getState.subscribe((state) => {
+      return state.isAuthenticated;
+    });
+    if (a) {
+      this.router.navigateByUrl('/');
+    }
   }
 
 }

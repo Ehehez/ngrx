@@ -1,21 +1,17 @@
-import { Action, ActionReducer } from '@ngrx/store';
+import { ActionReducer } from '@ngrx/store';
 import { IShopCart } from '../../interfaces/IShopCart';
 import { ShopCart } from '../../models/ShopCart';
-import { ShopcartAction } from 'src/app/models/shopcartAction';
-import { All, ShopcartActionTypes } from '../actions/shopcart.actions';
+import { All, ShopcartActionTypes } from './shopcart.actions';
 
 export const shopcartReducer: ActionReducer<IShopCart> = (state: ShopCart = new ShopCart(), action: All) => {
     switch (action.type) {
         case ShopcartActionTypes.PULL:
-            return state = action.payload;
+            state = action.payload;
+            return { ...state };
         case ShopcartActionTypes.CLEAR:
-            state.items = [];
-            state.cnt = 0;
-            state.sum = 0;
-            return state;
-
+            return initialState;
         default:
-            return state;
+            return { ...state };
     }
 }
 
@@ -24,3 +20,9 @@ export interface State {
     cnt: number;
     sum: number;
 }
+
+export const initialState: State = {
+    items: [],
+    cnt: 0,
+    sum: 0
+};

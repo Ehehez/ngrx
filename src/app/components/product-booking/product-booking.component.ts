@@ -6,17 +6,18 @@ import { IShopCart } from 'src/app/interfaces/IShopCart';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ShopcartAction } from 'src/app/models/shopcartAction';
-import { ShopcartActionTypes } from 'src/app/store/actions/shopcart.actions';
+import { ShopcartActionTypes } from 'src/app/store/shopcart/shopcart.actions';
 import { ShopCart } from 'src/app/models/ShopCart';
 import { AppState, selectShopcartState } from 'src/app/store/app.states';
 import { ShopcartService } from 'src/app/services/shopcart.service';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'product-booking',
   template: `
                <table style="margin: 0 auto; width:100%">
                  <tr>
                    <td (click)="decrement()"><label style="min-width:25px"><i class="fa fa-minus"></i></label></td>
-                   <td class="text-center"><input style="max-width:50px" type="text" id="{{shopItem.id}}" (change)="changes(shopItem.id)" class="text-center" value="{{shopItem.count}}"/></td>
+                   <td class="text-center"><input style="max-width:50px" type="number" id="{{shopItem.id}}" (change)="changes(shopItem.id)" class="text-center" value="{{shopItem.count}}"/></td>
                    <td (click)="increment()" id="{{shopItem.id}}"><label style="min-width:25px"><i class="fa fa-plus"></i></label></td>
                    <td colspan="3"><button (click)="sendToCart()" class="btn btn-outline-primary">Enviar al carro</button></td>
                  </tr>
@@ -42,6 +43,7 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
     private router: Router,
     private store: Store<AppState>,
     private shop: ShopcartService,
+    private toastr: ToastrService
   ) {
     //Create ShopItem
     this.shopItem = new ShopItem();
@@ -83,7 +85,7 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
 
   private sendToCart() {
     let action;
-    if (this.shopItem.count < this.shopItem.lastQuantity) {
+    if (this.shopItem.count <= this.shopItem.lastQuantity) {
       /*action = new ShopcartAction(PULL, this.shopItem);*/
       this.state.shopcart = this.shop.pullFromCart(this.state.shopcart, this.shopItem);
     } else if (this.shopItem.count == this.state.shopcart.lastQuantity) {
@@ -96,9 +98,18 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
 
     action = new ShopcartAction(ShopcartActionTypes.PULL, this.state.shopcart);
     this.store.dispatch(action);
+
+    this.showToaster(this.shopItem);
     this.shopItem.lastQuantity = this.shopItem.count;
   }
 
+  showToaster(payload) {
+    if (payload.lastQuantity < payload.count) {
+      this.toastr.success('Se han añadido ' + (payload.count - payload.lastQuantity) + ' unidad/es de ' + payload.name + ' al  para hacer un total de ' + payload.count);
+    } else if (payload.lastQuantity > payload.count) {
+      this.toastr.success('Se han quitado ' + (payload.lastQuantity - payload.count) + ' unidad/es de ' + payload.name + ' del carrito para hacer un total de ' + payload.count);
+    }
+  }
 
   numero(id) {
     this.shopcart$.forEach(x => {
@@ -114,12 +125,16 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   changes(id) {
-    let a = parseInt((<HTMLInputElement>document.getElementById(id)).value);
-    if (a <= this.shopItem.quantity) {
-      this.shopItem.count = a;
+    let a = (<HTMLInputElement>document.getElementById(id)).value;
+    let b = <HTMLInputElement>document.getElementById(id);
+    if (parseInt(a) <= this.shopItem.quantity) {
+      this.shopItem.count = parseInt(a);
+      b.value = this.shopItem.count + "";
     } else {
-      document.getElementById(id).value = this.shopItem.count;
+      b.value = this.shopItem.quantity + "";
+      this.shopItem.count = this.shopItem.quantity;
     }
+
   }
 
   ngOnDestroy() {

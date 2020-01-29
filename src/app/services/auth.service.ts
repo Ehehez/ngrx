@@ -1,17 +1,25 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { User } from '../models/user';
+import { Store } from '@ngrx/store';
+import { AppState } from '../store/app.states';
 
 
 @Injectable()
 export class AuthService {
   private BASE_URL = 'http://localhost:1337';
-
+  private state;
+  private subs = new Subscription();
   private headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
 
-  constructor(private http: HttpClient) { }
+
+  constructor(private http: HttpClient,
+    store: Store<AppState>) {
+    this.subs.add(store.take(1).subscribe(o => this.state = o.auth));
+
+  }
 
   getToken(): string {
     return localStorage.getItem('token');

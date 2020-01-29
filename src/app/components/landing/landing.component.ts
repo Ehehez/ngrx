@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { AppState } from 'src/app/store/app.states';
 import { Store } from '@ngrx/store';
 import { IShopCart } from 'src/app/interfaces/IShopCart';
-import { LogOut } from 'src/app/store/actions/auth.actions';
+import { LogOut } from 'src/app/store/auth/auth.actions';
 import { AccesoBDService } from '../../services/acceso-bd.service';
 
 
@@ -20,7 +20,6 @@ export class LandingComponent implements OnInit, OnChanges, OnDestroy {
   @Input('product') product: Articulo;
   @Input('default-number') defaultNumber: number;
 
-  private counter: String = "";
   private shopItem: Articulo = null;
   private lista: Articulo;
   getState: Observable<any>;
@@ -36,9 +35,9 @@ export class LandingComponent implements OnInit, OnChanges, OnDestroy {
   ) {
 
     this.shopItem = new Articulo();
-    this.getState = this.store.select((state) => { return state.authState; })
+    this.getState = this.store.select((state) => { return state.auth; })
     /*this.shopcart$ = this.store.select((state) => { return state.shopcart; })*/
-    store.subscribe(o => this.state = o);
+    this.subs.add(store.subscribe(o => this.state = o));
   }
 
 
@@ -53,11 +52,10 @@ export class LandingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subs.unsubscribe;
+    this.subs.unsubscribe();
   }
 
   ngOnInit() {
-
     this.user = this.state.auth.user.email;
     this.subs.add(this.bd.getArticulos().subscribe(list => {
       this.lista = list;

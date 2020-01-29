@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 
 import { User } from '../../models/user';
 import { AppState, selectAuthState } from '../../store/app.states';
-import { SignUp } from '../../store/actions/auth.actions';
+import { SignUp } from '../../store/auth/auth.actions';
 import { Observable } from 'rxjs';
 
 

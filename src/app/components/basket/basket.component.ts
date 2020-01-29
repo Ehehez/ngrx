@@ -8,9 +8,9 @@ import { IShopCart } from 'src/app/interfaces/IShopCart';
 import { Router } from '@angular/router';
 import { BasketService } from 'src/app/services/basket.service';
 import { Order } from 'src/app/models/order';
-import { LogOut } from 'src/app/store/actions/auth.actions';
+import { LogOut } from 'src/app/store/auth/auth.actions';
 import { AccesoBDService } from 'src/app/services/acceso-bd.service';
-import { ShopcartActionTypes } from 'src/app/store/actions/shopcart.actions';
+import { ShopcartActionTypes } from 'src/app/store/shopcart/shopcart.actions';
 
 @Component({
   selector: 'app-basket',
@@ -27,6 +27,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   isAuthenticated = false;
   user = null;
   errorMessage = null;
+  enviado = false;
   public total = 0;
   cnt;
   sum;
@@ -40,7 +41,6 @@ export class BasketComponent implements OnInit, OnDestroy {
     this.shopcart$ = this.store.select<IShopCart>(x => x.shopcart);
     this.itemNumbers = {};
     store.take(1).subscribe(o => this.state = o);
-    /*this.user = localStorage.getItem('user');*/
 
   }
 
@@ -48,15 +48,22 @@ export class BasketComponent implements OnInit, OnDestroy {
     this.initBooks();
     this.subs.add(this.getState.subscribe((state) => {
       this.isAuthenticated = state.isAuthenticated;
+      if (!this.isAuthenticated) {
+        this.router.navigateByUrl('/log-in');
+      }
       this.errorMessage = state.errorMessage;
     }));
     this.user = this.state.auth.user.email;
+    console.log(this.user);
   }
 
 
   private initBooks() {
     this.subs.add(this.bd.getArticulos().subscribe(list => {
       this.lista = list;
+      if (this.lista.length == 0) {
+        this.enviado = true;
+      }
       this.subs.add(this.shopcart$.subscribe(cart => {
         this.lista.forEach(item => {
           if (cart.items) {
@@ -84,8 +91,10 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   saveOrder() {
+
     let descrip = "";
     let total = 0;
+    let payload = new Order();
     this.subs.add(this.shopcart$.subscribe(cart => {
       this.lista.forEach(item => {
         if (cart.items) {
@@ -99,34 +108,36 @@ export class BasketComponent implements OnInit, OnDestroy {
             payload.name = storeItem.name;
             payload.price = storeItem.price;
             payload.quantity = storeItem.quantity - storeItem.count;
-            this.bd.setArticulo(payload);
+            this.subs.add(this.bd.setArticulo(payload).subscribe());
             descrip += storeItem.name + " x " + storeItem.count + " -----> " + storeItem.count * storeItem.price + "€\n";
             this.itemNumbers[item.id] = storeItem.count;
             total += storeItem.price * storeItem.count;
           }
         }
       });
-      descrip += "Total = " + total + "€";
-      let payload = new Order();
-      payload.Comprador = localStorage.getItem('user');
-      payload.coste = this.total;
-      payload.Descripcion = descrip;
-      let date = new Date();
-      payload.fechaCompra = date.toDateString();
-      let ret;
-      this.subs.add(this.basket.saveOrder(payload).subscribe((data) => {
-      }));
-      this.store.dispatch({ type: ShopcartActionTypes.CLEAR });
-      this.router.navigateByUrl('/historial');
-      return ret;
+
+
     }))
+    descrip += "Total = " + total + "€";
+    payload.Comprador = this.user;
+    payload.coste = this.total;
+    payload.Descripcion = descrip;
+    let date = new Date();
+    payload.fechaCompra = date.toDateString();
+    console.log("uno");
+    this.store.dispatch({ type: ShopcartActionTypes.CLEAR });
+    this.subs.add(this.basket.saveOrder(payload));
+    this.enviado = true;
+    this.router.navigateByUrl('/historial');
   }
 
   ngOnDestroy() {
     this.subs.unsubscribe();
   }
   logOut() {
-    this.store.dispatch(new LogOut);
+    let a = this.store.dispatch(new LogOut);
+    console.log("wat");
+    console.log(a);
   }
 
 }

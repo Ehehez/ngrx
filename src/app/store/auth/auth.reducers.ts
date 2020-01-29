@@ -1,5 +1,5 @@
 import { User } from '../../models/user';
-import { AuthActionTypes, All } from '../actions/auth.actions';
+import { AuthActionTypes, All } from './auth.actions';
 
 export interface State {
     // is a user authenticated?
@@ -60,6 +60,7 @@ export function reducer(state = initialState, action: All): State {
 
         case AuthActionTypes.LOGOUT: {
             return initialState;
+
         }
     }
 }

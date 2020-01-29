@@ -1,10 +1,10 @@
-import * as auth from './reducers/auth.reducers';
+import * as auth from './auth/auth.reducers';
 import { createFeatureSelector } from '@ngrx/store';
-import * as cart from './reducers/shopcart.reducer';
+import * as cart from './shopcart/shopcart.reducer';
 
 
 export interface AppState {
-    authState: auth.State;
+    auth: auth.State;
     shopcart: cart.State;
 }
 
