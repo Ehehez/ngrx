@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AppState } from 'src/app/store/app.states';
 import { Store } from '@ngrx/store';
-import { IShopCart } from 'src/app/interfaces/IShopCart';
 import { LogOut } from 'src/app/store/auth/auth.actions';
 import { AccesoBDService } from '../../services/acceso-bd.service';
 
@@ -13,9 +12,9 @@ import { AccesoBDService } from '../../services/acceso-bd.service';
 @Component({
   selector: 'app-landing',
   templateUrl: './landing.component.html',
-  styleUrls: ['./landing.component.css']
+  styleUrls: ['./landing.component.css'],
 })
-export class LandingComponent implements OnInit, OnChanges, OnDestroy {
+export class LandingComponent implements OnInit, OnDestroy {
 
   @Input('product') product: Articulo;
   @Input('default-number') defaultNumber: number;
@@ -26,29 +25,18 @@ export class LandingComponent implements OnInit, OnChanges, OnDestroy {
   isAuthenticated = false;
   user = null;
   errorMessage = null;
-  private shopcart$: Observable<IShopCart>;
   subs = new Subscription();
   state;
+
   constructor(
     private router: Router, private http: HttpClient,
-    private store: Store<AppState>, private bd: AccesoBDService
+    private store: Store<AppState>, private bd: AccesoBDService,
+
   ) {
-
-    this.shopItem = new Articulo();
     this.getState = this.store.select((state) => { return state.auth; })
-    /*this.shopcart$ = this.store.select((state) => { return state.shopcart; })*/
-    this.subs.add(store.subscribe(o => this.state = o));
-  }
-
-
-
-
-  public ngOnChanges() {
-    this.shopItem.id = this.product.id;
-    this.shopItem.name = this.product.name;
-    this.shopItem.quantity = this.product.quantity;
-    this.shopItem.price = this.product.price;
-    this.subs.add(this.store.subscribe(o => this.state = o));
+    this.subs.add(this.bd.getArticulos().subscribe(list => {
+      this.lista = list;
+    }));
   }
 
   ngOnDestroy() {
@@ -56,26 +44,31 @@ export class LandingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.user = this.state.auth.user.email;
-    this.subs.add(this.bd.getArticulos().subscribe(list => {
-      this.lista = list;
-    }));
-
+    this.shopItem = new Articulo();
+    this.subs.add(this.store.subscribe(o => this.state = o));
+    console.log(this.state.auth.isAuthenticated);
+    if (!this.state.auth.isAuthenticated) {
+      this.router.navigateByUrl('/log-in');
+    } else {
+      this.user = this.state.auth.user.email;
+    }
   }
 
   logOut() {
     this.store.dispatch(new LogOut);
+    if (this.state.auth.isAuthenticated == false) {
+      localStorage.clear();
+      this.router.navigateByUrl('/log-in');
+    }
   }
-
-
 
   private goToBasket() {
     this.router.navigate(['/basket']);
   }
+
   private goToHistorial() {
     this.router.navigate(['/historial']);
   }
-
 }
 
 

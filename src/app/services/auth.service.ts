@@ -17,11 +17,14 @@ export class AuthService {
 
   constructor(private http: HttpClient,
     store: Store<AppState>) {
-    this.subs.add(store.take(1).subscribe(o => this.state = o.auth));
+    this.subs.add(store.subscribe(o => this.state = o.auth));
 
   }
 
   getToken(): string {
+    if (this.state.user != null) {
+      return this.state.user.token;
+    }
     return localStorage.getItem('token');
   }
 

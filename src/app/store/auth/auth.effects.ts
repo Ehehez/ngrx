@@ -35,7 +35,6 @@ export class AuthEffects {
         .switchMap(payload => {
             return this.authService.logIn(payload.identifier, payload.password)
                 .pipe(map((user) => {
-
                     localStorage.setItem('token', user.jwt);
                     return new LogInSuccess({ token: user.jwt, email: user.user.email });
                 }))
@@ -48,7 +47,6 @@ export class AuthEffects {
     LogInSuccess: Observable<any> = this.actions.pipe(
         ofType(AuthActionTypes.LOGIN_SUCCESS),
         tap((user) => {
-            return true;
         })
     );
 
@@ -73,10 +71,7 @@ export class AuthEffects {
 
     @Effect({ dispatch: false })
     SignUpSuccess: Observable<any> = this.actions.pipe(
-        ofType(AuthActionTypes.SIGNUP_SUCCESS),
-        tap((user) => {
-            return true;
-        })
+        ofType(AuthActionTypes.SIGNUP_SUCCESS)
     );
 
 
@@ -87,11 +82,7 @@ export class AuthEffects {
 
     @Effect({ dispatch: false })
     public LogOut: Observable<any> = this.actions.pipe(
-        ofType(AuthActionTypes.LOGOUT),
-        tap((user) => {
-            localStorage.clear();
-            location.reload();
-        })
+        ofType(AuthActionTypes.LOGOUT)
     );
 
 

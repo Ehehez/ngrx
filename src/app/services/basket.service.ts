@@ -14,7 +14,6 @@ export class BasketService {
     private store: Store<AppState>) { }
 
   saveOrder(orden: Order) {
-    this.store.dispatch({ type: ShopcartActionTypes.CLEAR });
     return this.http.post('http://localhost:1337/carritos', (orden)).subscribe();
   }
 

@@ -5,11 +5,16 @@ import { All, ShopcartActionTypes } from './shopcart.actions';
 
 export const shopcartReducer: ActionReducer<IShopCart> = (state: ShopCart = new ShopCart(), action: All) => {
     switch (action.type) {
-        case ShopcartActionTypes.PULL:
+        case ShopcartActionTypes.PUSH:
             state = action.payload;
             return { ...state };
         case ShopcartActionTypes.CLEAR:
-            return initialState;
+            return {
+                ...state,
+                items: [],
+                cnt: 0,
+                sum: 0
+            };
         default:
             return { ...state };
     }

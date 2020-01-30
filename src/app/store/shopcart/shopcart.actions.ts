@@ -1,20 +1,21 @@
 import { Action } from '@ngrx/store';
+import { initialState } from '../auth/auth.reducers';
 
 
 export enum ShopcartActionTypes {
-    PULL = '[shopCart] Pull',
+    PUSH = '[shopCart] Push',
     CLEAR = '[shopCart] Clear',
 
 }
 
 export class Push implements Action {
-    readonly type = ShopcartActionTypes.PULL;
+    readonly type = ShopcartActionTypes.PUSH;
     constructor(public payload: any) { }
 }
 
 export class Clear implements Action {
     readonly type = ShopcartActionTypes.CLEAR;
-    constructor(public payload: any) { }
+    readonly payload = initialState;
 }
 
 export type All =

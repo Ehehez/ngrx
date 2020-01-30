@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { User } from '../../models/user';
@@ -15,9 +15,10 @@ import { Router } from '@angular/router';
   templateUrl: './log-in.component.html',
   styleUrls: ['./log-in.component.css']
 })
-export class LogInComponent implements OnInit {
+export class LogInComponent implements OnInit, OnDestroy {
 
   user: User = new User();
+  state;
   getState: Observable<any>;
   errorMessage: string | null;
   subs = new Subscription();
@@ -31,9 +32,8 @@ export class LogInComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.subs.add(this.getState.subscribe((state) => {
-      this.errorMessage = state.errorMessage;
-    }));
+    this.store.subscribe((o) => this.state = o);
+    this.errorMessage = this.state.auth.errorMessage;
   };
 
   onSubmit(): void {
@@ -44,12 +44,19 @@ export class LogInComponent implements OnInit {
 
     this.store.dispatch({ type: ShopcartActionTypes.CLEAR });
     this.store.dispatch(new LogIn(payload));
-    let a = this.getState.subscribe((state) => {
-      return state.isAuthenticated;
-    });
-    if (a) {
-      this.router.navigateByUrl('/');
-    }
+
+    setTimeout(() => {
+      console.log(this.state);
+      let a = this.state.auth.isAuthenticated;
+      if (a) {
+        this.router.navigateByUrl('/');
+      }
+    }, 200);
+
+
   }
 
+  ngOnDestroy() {
+    this.subs.unsubscribe();
+  }
 }

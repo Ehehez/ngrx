@@ -15,9 +15,10 @@ export class TokenInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     this.authService = this.injector.get(AuthService);
     const token: string = this.authService.getToken();
-    if (request.url.includes('auth/local')) {
+    if (request.url.includes('auth/local') || request.url.includes('auth/local/register')) {
       return next.handle(request);
     }
+
     request = request.clone({
       setHeaders: {
         'Authorization': `Bearer ${token}`,

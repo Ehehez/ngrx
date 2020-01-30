@@ -2,34 +2,37 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Router, CanActivate } from '@angular/router';
 
 import { AuthService } from './auth.service';
-import { AppState, selectAuthState } from '../store/app.states';
+import { AppState } from '../store/app.states';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
-
 
 @Injectable()
 export class AuthGuardService implements CanActivate, OnDestroy {
 
   subs = new Subscription();
   state;
-  getState;
   constructor(
     public auth: AuthService,
     public router: Router,
     private store: Store<AppState>
   ) {
-    this.getState = this.store.select(selectAuthState);
+
   }
   canActivate(): boolean {
-
+    this.store.subscribe((o) => this.state = o);
+    if (this.state.auth.isAuthenticated == false) {
+      this.router.navigateByUrl('/log-in');
+    }
     let isLogin;
-    this.subs.add(this.getState.subscribe((o) => isLogin = o.isAuthenticated));
-    if (isLogin || this.auth.getToken()) {
-      isLogin = true;
-    } else isLogin = false;
+    setTimeout(() => {
+      isLogin = this.state.auth.isAuthenticated;
+      if (isLogin || this.auth.getToken()) {
+        isLogin = true;
+      } else isLogin = false;
+      if (!isLogin) this.router.navigateByUrl('/log-in');
 
-    if (!isLogin) this.router.navigateByUrl('/log-in');
-
+    }, 50)
+    isLogin = this.state.auth.isAuthenticated;
     return isLogin;
   }
   ngOnDestroy() {

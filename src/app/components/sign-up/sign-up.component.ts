@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { User } from '../../models/user';
 import { AppState, selectAuthState } from '../../store/app.states';
 import { SignUp } from '../../store/auth/auth.actions';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -12,23 +13,29 @@ import { Observable } from 'rxjs';
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.css']
 })
-export class SignUpComponent implements OnInit {
+export class SignUpComponent implements OnInit, OnDestroy {
 
-
+  subs = new Subscription();
   user: User = new User();
   getState: Observable<any>;
   errorMessage: string | null;
-
+  state;
   constructor(
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private router: Router
   ) {
-    this.getState = this.store.select(selectAuthState);
   }
 
   ngOnInit() {
-    this.getState.subscribe((state) => {
-      this.errorMessage = state.errorMessage;
-    });
+    this.subs.add(this.store.subscribe((o) => {
+      this.state = o;
+      this.errorMessage = o.auth.errorMessage;
+    }));
+
+  }
+
+  ngOnDestroy() {
+    this.subs.unsubscribe();
   }
 
   onSubmit(): void {
@@ -38,6 +45,11 @@ export class SignUpComponent implements OnInit {
       password: this.user.password
     };
     this.store.dispatch(new SignUp(payload));
+    setTimeout(() => {
+      if (this.state.auth.user != null) {
+        this.router.navigateByUrl('/log-in');
+      }
+    }, 400);
   }
 
 }

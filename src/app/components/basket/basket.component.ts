@@ -32,7 +32,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   cnt;
   sum;
   state;
-
+  carts;
 
   constructor(private store: Store<AppState>, private http: HttpClient,
     private router: Router, private basket: BasketService, private bd: AccesoBDService
@@ -40,21 +40,25 @@ export class BasketComponent implements OnInit, OnDestroy {
     this.getState = this.store.select(selectAuthState);
     this.shopcart$ = this.store.select<IShopCart>(x => x.shopcart);
     this.itemNumbers = {};
-    store.take(1).subscribe(o => this.state = o);
 
   }
 
   ngOnInit() {
-    this.initBooks();
-    this.subs.add(this.getState.subscribe((state) => {
-      this.isAuthenticated = state.isAuthenticated;
-      if (!this.isAuthenticated) {
-        this.router.navigateByUrl('/log-in');
-      }
-      this.errorMessage = state.errorMessage;
-    }));
-    this.user = this.state.auth.user.email;
-    console.log(this.user);
+
+    this.subs.add(this.store.subscribe(o => this.state = o));
+    if (!this.state.auth.isAuthenticated) {
+      this.router.navigateByUrl('/log-in');
+    } else {
+      this.initBooks();
+      this.subs.add(this.getState.subscribe((state) => {
+        this.isAuthenticated = state.isAuthenticated;
+        if (!this.isAuthenticated) {
+          this.router.navigateByUrl('/log-in');
+        }
+        this.errorMessage = state.errorMessage;
+      }));
+      this.user = this.state.auth.user.email;
+    }
   }
 
 
@@ -64,21 +68,21 @@ export class BasketComponent implements OnInit, OnDestroy {
       if (this.lista.length == 0) {
         this.enviado = true;
       }
-      this.subs.add(this.shopcart$.subscribe(cart => {
-        this.lista.forEach(item => {
-          if (cart.items) {
-            let storeItem = cart.items.find(x => x.id === item.id);
-            if (!storeItem) {
-              this.itemNumbers[item.id] = 0;
-            }
-            else {
-              this.itemNumbers[item.id] = storeItem.count;
-              this.total += storeItem.price * storeItem.count;
-            }
+
+      this.lista.forEach(item => {
+        if (this.state.shopcart.items) {
+          let storeItem = this.state.shopcart.items.find(x => x.id === item.id);
+          if (!storeItem) {
+            this.itemNumbers[item.id] = 0;
           }
-        });
-      })
-      )
+          else {
+            this.itemNumbers[item.id] = storeItem.count;
+            this.total += storeItem.price * storeItem.count;
+          }
+        }
+      });
+
+
     }))
   }
 
@@ -90,54 +94,56 @@ export class BasketComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/historial');
   }
 
-  saveOrder() {
-
+  async saveOrder() {
     let descrip = "";
     let total = 0;
-    let payload = new Order();
-    this.subs.add(this.shopcart$.subscribe(cart => {
-      this.lista.forEach(item => {
-        if (cart.items) {
-          let storeItem = cart.items.find(x => x.id === item.id);
-          if (!storeItem) {
-            this.itemNumbers[item.id] = 0;
-          }
-          else {
-            let payload = new Articulo();
-            payload.id = parseInt(storeItem.id);
-            payload.name = storeItem.name;
-            payload.price = storeItem.price;
-            payload.quantity = storeItem.quantity - storeItem.count;
-            this.subs.add(this.bd.setArticulo(payload).subscribe());
-            descrip += storeItem.name + " x " + storeItem.count + " -----> " + storeItem.count * storeItem.price + "€\n";
-            this.itemNumbers[item.id] = storeItem.count;
-            total += storeItem.price * storeItem.count;
-          }
+    let payloadOrd = new Order();
+
+    this.carts = this.state.shopcart.items;
+    this.lista.forEach(item => {
+      if (this.carts) {
+        let storeItem = this.carts.find(x => x.id === item.id);
+        if (!storeItem) {
+          this.itemNumbers[item.id] = 0;
         }
-      });
+        else {
+          let payload = new Articulo();
+          payload.id = parseInt(storeItem.id);
+          payload.name = storeItem.name;
+          payload.price = storeItem.price;
+          payload.quantity = storeItem.quantity - storeItem.count;
+          this.subs.add(this.bd.setArticulo(payload).subscribe((o) => {
+          }));
+          setTimeout(() => { }, 100);
+          descrip += storeItem.name + " x " + storeItem.count + " -----> " + storeItem.count * storeItem.price + "€\n";
+          this.itemNumbers[item.id] = storeItem.count;
+          total += storeItem.price * storeItem.count;
+        }
 
-
-    }))
+      }
+      ;
+    });
     descrip += "Total = " + total + "€";
-    payload.Comprador = this.user;
-    payload.coste = this.total;
-    payload.Descripcion = descrip;
+    payloadOrd.Comprador = this.state.auth.user.email;
+    payloadOrd.Descripcion = descrip;
+    payloadOrd.coste = total;
     let date = new Date();
-    payload.fechaCompra = date.toDateString();
-    console.log("uno");
+    payloadOrd.fechaCompra = date.toDateString();
+    this.subs.add(this.basket.saveOrder(payloadOrd));
     this.store.dispatch({ type: ShopcartActionTypes.CLEAR });
-    this.subs.add(this.basket.saveOrder(payload));
-    this.enviado = true;
     this.router.navigateByUrl('/historial');
   }
+
 
   ngOnDestroy() {
     this.subs.unsubscribe();
   }
   logOut() {
-    let a = this.store.dispatch(new LogOut);
-    console.log("wat");
-    console.log(a);
+    this.store.dispatch(new LogOut);
+    if (this.state.auth.isAuthenticated == false) {
+      localStorage.clear();
+      this.router.navigateByUrl('/log-in');
+    }
   }
 
 }

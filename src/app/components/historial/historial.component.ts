@@ -4,8 +4,6 @@ import { AppState } from 'src/app/store/app.states';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BasketService } from 'src/app/services/basket.service';
-import { Order } from 'src/app/models/order';
-import { IShopCart } from 'src/app/interfaces/IShopCart';
 import { LogOut } from 'src/app/store/auth/auth.actions';
 import { Subscription } from 'rxjs';
 import { AccesoBDService } from 'src/app/services/acceso-bd.service';
@@ -21,7 +19,6 @@ export class HistorialComponent implements OnInit, OnDestroy {
   public compras$;
   public compras = [];
   getState;
-  shopcart$;
   user;
   state;
 
@@ -29,21 +26,23 @@ export class HistorialComponent implements OnInit, OnDestroy {
     private router: Router, private basket: BasketService,
     private bd: AccesoBDService) {
     this.getState = this.store.select('auth');
-    this.shopcart$ = this.store.select<IShopCart>(x => x.shopcart);
-    store.take(1).subscribe(o => this.state = o);
+
   }
 
   ngOnInit() {
-    this.user = this.state.auth.user.email;
-    console.log(this.user);
-    this.subs.add(this.bd.getOrders().subscribe((data) => {
-      data.forEach(orden => {
-        if (orden.Comprador == this.user) {
-          this.compras.push(orden);
-        }
-      })
-    }));
-    console.log(this.compras);
+    this.subs.add(this.store.subscribe(o => this.state = o));
+    if (!this.state.auth.isAuthenticated) {
+      this.router.navigateByUrl('/log-in');
+    } else {
+      this.user = this.state.auth.user.email;
+      this.subs.add(this.bd.getOrders().subscribe((data) => {
+        data.forEach(orden => {
+          if (orden.Comprador == this.user) {
+            this.compras.push(orden);
+          }
+        })
+      }));
+    }
   }
 
   goToProducts() {
@@ -59,13 +58,11 @@ export class HistorialComponent implements OnInit, OnDestroy {
   }
   logOut() {
     this.store.dispatch(new LogOut);
+    localStorage.clear();
+    if (this.state.auth.isAuthenticated == false) {
+      this.router.navigateByUrl('/log-in');
+    }
   }
-
-  /*vertd(id) {
-    if (document.getElementById(id).getAttribute('class') == "invisible") {
-      document.getElementById(id).setAttribute('class', 'visible');
-    } else document.getElementById(id).setAttribute('class', 'invisible');
-  }*/
 }
 
 

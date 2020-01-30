@@ -45,7 +45,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     FormsModule,
     HttpClientModule,
     EffectsModule.forRoot([AuthEffects]),
-    StoreModule.forRoot(reducers, { metaReducers: [storageMetaReducer] }),
+    StoreModule.forRoot(reducers, { /*metaReducers: [storageMetaReducer]*/ }),
     StoreDevtoolsModule.instrument({
       maxAge: 10
     }),
