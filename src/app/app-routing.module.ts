@@ -10,10 +10,10 @@ import { HistorialComponent } from './components/historial/historial.component';
 const routes: Routes = [
   { path: 'log-in', component: LogInComponent },
   { path: 'sign-up', component: SignUpComponent },
-  { path: '', component: LandingComponent, canActivate: [AuthGuardService] },
+  { path: 'productos', component: LandingComponent, canActivate: [AuthGuardService] },
   { path: 'basket', component: BasketComponent, canActivate: [AuthGuardService] },
   { path: 'historial', component: HistorialComponent, canActivate: [AuthGuardService] },
-  { path: '**', redirectTo: '/' }
+  { path: '**', redirectTo: '/log-in' }
 ];
 
 @NgModule({

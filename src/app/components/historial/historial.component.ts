@@ -46,7 +46,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
   }
 
   goToProducts() {
-    this.router.navigateByUrl('');
+    this.router.navigateByUrl('/productos');
   }
 
   goToBasket() {

@@ -25,7 +25,12 @@ export class AuthService {
     if (this.state.user != null) {
       return this.state.user.token;
     }
-    return localStorage.getItem('token');
+    if (localStorage.getItem('token')) {
+
+      return localStorage.getItem('token');
+    }
+
+    return null;
   }
 
   logIn(email: string, password: string): Observable<any> {

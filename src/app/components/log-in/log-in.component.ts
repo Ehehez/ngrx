@@ -46,12 +46,11 @@ export class LogInComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LogIn(payload));
 
     setTimeout(() => {
-      console.log(this.state);
       let a = this.state.auth.isAuthenticated;
       if (a) {
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl('/productos');
       }
-    }, 200);
+    }, 400);
 
 
   }

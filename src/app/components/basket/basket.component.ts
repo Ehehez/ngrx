@@ -46,19 +46,15 @@ export class BasketComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.subs.add(this.store.subscribe(o => this.state = o));
-    if (!this.state.auth.isAuthenticated) {
-      this.router.navigateByUrl('/log-in');
-    } else {
-      this.initBooks();
-      this.subs.add(this.getState.subscribe((state) => {
-        this.isAuthenticated = state.isAuthenticated;
-        if (!this.isAuthenticated) {
-          this.router.navigateByUrl('/log-in');
-        }
-        this.errorMessage = state.errorMessage;
-      }));
-      this.user = this.state.auth.user.email;
-    }
+    this.initBooks();
+    this.isAuthenticated = this.state.isAuthenticated;
+
+    /*this.subs.add(this.getState.subscribe((state) => {
+      
+      this.errorMessage = state.errorMessage;
+    }));*/
+    this.user = this.state.auth.user.email;
+
   }
 
 
@@ -87,7 +83,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   goToProducts() {
-    this.router.navigateByUrl('');
+    this.router.navigateByUrl('/productos');
   }
 
   goToHistorial() {

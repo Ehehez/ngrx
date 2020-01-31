@@ -46,8 +46,8 @@ export class LandingComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.shopItem = new Articulo();
     this.subs.add(this.store.subscribe(o => this.state = o));
-    console.log(this.state.auth.isAuthenticated);
-    if (!this.state.auth.isAuthenticated) {
+    console.log(this.state);
+    if (this.state.auth.isAuthenticated === false) {
       this.router.navigateByUrl('/log-in');
     } else {
       this.user = this.state.auth.user.email;
