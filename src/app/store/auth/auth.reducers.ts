@@ -59,8 +59,21 @@ export function reducer(state = initialState, action: All): State {
         }
 
         case AuthActionTypes.LOGOUT: {
-            return initialState;
+            return {
+                ...state,
+                isAuthenticated: false,
+                errorMessage: null,
+            };
 
+        }
+        case AuthActionTypes.SETID: {
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    id: action.payload.id,
+                }
+            }
         }
     }
 }

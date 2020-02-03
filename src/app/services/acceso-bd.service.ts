@@ -23,4 +23,8 @@ export class AccesoBDService {
   getOrders() {
     return this.http.get<Order[]>('http://localhost:1337/carritos');
   }
+
+  setUser(payload, id) {
+    return this.http.put('http://localhost:1337/users/' + id, (payload));
+  }
 }

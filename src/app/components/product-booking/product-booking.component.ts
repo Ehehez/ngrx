@@ -9,6 +9,7 @@ import { ShopCart } from 'src/app/models/ShopCart';
 import { AppState } from 'src/app/store/app.states';
 import { ShopcartService } from 'src/app/services/shopcart.service';
 import { ToastrService } from 'ngx-toastr';
+import { AccesoBDService } from 'src/app/services/acceso-bd.service';
 @Component({
   selector: 'product-booking',
   template: `
@@ -37,7 +38,8 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private store: Store<AppState>,
     private shop: ShopcartService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private bd: AccesoBDService
   ) {
     //Create ShopItem
     this.shopItem = new ShopItem();
@@ -95,6 +97,10 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
 
       this.showToaster(this.shopItem);
       this.shopItem.lastQuantity = this.shopItem.count;
+      let payload = {
+        carrito: JSON.stringify(this.state.shopcart),
+      }
+      this.subs.add(this.bd.setUser(JSON.stringify(payload), this.state.auth.user.id).subscribe((data) => { }));
     }
   }
 

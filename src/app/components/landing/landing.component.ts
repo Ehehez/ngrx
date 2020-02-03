@@ -46,7 +46,6 @@ export class LandingComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.shopItem = new Articulo();
     this.subs.add(this.store.subscribe(o => this.state = o));
-    console.log(this.state);
     if (this.state.auth.isAuthenticated === false) {
       this.router.navigateByUrl('/log-in');
     } else {
@@ -56,10 +55,12 @@ export class LandingComponent implements OnInit, OnDestroy {
 
   logOut() {
     this.store.dispatch(new LogOut);
-    if (this.state.auth.isAuthenticated == false) {
-      localStorage.clear();
-      this.router.navigateByUrl('/log-in');
-    }
+    setTimeout(() => {
+      if (this.state.auth.isAuthenticated == false) {
+        localStorage.clear();
+        this.router.navigateByUrl('/log-in');
+      }
+    }, 100)
   }
 
   private goToBasket() {

@@ -3,10 +3,12 @@ import { Store } from '@ngrx/store';
 
 import { User } from '../../models/user';
 import { AppState, selectAuthState } from '../../store/app.states';
-import { LogIn } from '../../store/auth/auth.actions';
+import { LogIn, AuthActionTypes } from '../../store/auth/auth.actions';
 import { Observable, Subscription } from 'rxjs';
 import { ShopcartActionTypes } from 'src/app/store/shopcart/shopcart.actions';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { ShopcartAction } from 'src/app/models/shopcartAction';
 
 
 
@@ -22,11 +24,12 @@ export class LogInComponent implements OnInit, OnDestroy {
   getState: Observable<any>;
   errorMessage: string | null;
   subs = new Subscription();
-
+  anterior;
 
   constructor(
     private store: Store<AppState>,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {
     this.getState = this.store.select(selectAuthState);
   }
@@ -34,6 +37,10 @@ export class LogInComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.store.subscribe((o) => this.state = o);
     this.errorMessage = this.state.auth.errorMessage;
+
+    if (this.state.auth.user != null) {
+      this.anterior = this.state.auth.user.email;
+    } else this.anterior = "no";
   };
 
   onSubmit(): void {
@@ -42,13 +49,34 @@ export class LogInComponent implements OnInit, OnDestroy {
       password: this.user.password
     };
 
-    this.store.dispatch({ type: ShopcartActionTypes.CLEAR });
     this.store.dispatch(new LogIn(payload));
 
     setTimeout(() => {
       let a = this.state.auth.isAuthenticated;
       if (a) {
-        this.router.navigateByUrl('/productos');
+        /* if (this.anterior == this.state.auth.user.email) {
+           this.router.navigateByUrl('');
+         } else {*/
+        this.http.get<User>('http://localhost:1337/users?email=' + this.user.email).subscribe((data) => {
+          this.state.auth.user.id = data[0].id;
+          this.store.dispatch({
+            type: AuthActionTypes.SETID, payload: {
+              id: data[0].id,
+            }
+          })
+          if (data[0].carrito != null) {
+            let payload = JSON.parse(data[0].carrito);
+            this.state.shopcart = JSON.parse(data[0].carrito);
+            let action = new ShopcartAction(ShopcartActionTypes.PUSH, this.state.shopcart);
+            this.store.dispatch(action);
+          } else {
+            let action = new ShopcartAction(ShopcartActionTypes.CLEAR);
+            this.store.dispatch(action);
+          }
+          this.router.navigateByUrl('');
+        });
+
+        /*}*/
       }
     }, 400);
 

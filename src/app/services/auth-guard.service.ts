@@ -19,10 +19,10 @@ export class AuthGuardService implements CanActivate, OnDestroy {
   }
   canActivate(): boolean {
     this.store.subscribe((o) => this.state = o);
-    console.log(this.state);
+    (this.state);
     if (this.state.auth.isAuthenticated === true && this.auth.getToken() != null) {
       return true;
-    } else return false;
+    } else this.router.navigateByUrl('/log-in');
 
   }
   ngOnDestroy() {

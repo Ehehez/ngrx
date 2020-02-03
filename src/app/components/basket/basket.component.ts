@@ -83,7 +83,7 @@ export class BasketComponent implements OnInit, OnDestroy {
   }
 
   goToProducts() {
-    this.router.navigateByUrl('/productos');
+    this.router.navigateByUrl('');
   }
 
   goToHistorial() {
@@ -127,6 +127,12 @@ export class BasketComponent implements OnInit, OnDestroy {
     payloadOrd.fechaCompra = date.toDateString();
     this.subs.add(this.basket.saveOrder(payloadOrd));
     this.store.dispatch({ type: ShopcartActionTypes.CLEAR });
+
+    let payload = {
+      carrito: JSON.stringify(this.state.shopcart),
+    }
+    this.subs.add(this.bd.setUser(JSON.stringify(payload), this.state.auth.user.id).subscribe((data) => { }));
+
     this.router.navigateByUrl('/historial');
   }
 
