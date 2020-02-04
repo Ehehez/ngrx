@@ -16,6 +16,12 @@
 </div>
 <div>
     <br>
+    <select class="btn btn-default" id="cat">
+        <option *ngFor="let categoria of categorias" value="{{categoria.id}}">
+            {{categoria.Name}}
+        </option>
+    </select>
+    <button class="btn btn-default" (click)="filter()">Filter</button>
     <br>
 </div>
 <div>
@@ -29,7 +35,7 @@
                 <th class="text-center">Shopping Cart</th>
             </tr>
         </thead>
-        <tr *ngFor="let list of lista">
+        <tr *ngFor="let list of lista | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
             <td class="text-center">{{list.id}}</td>
             <td>{{list.name}}</td>
             <td class="text-center">{{list.price}}</td>
@@ -40,4 +46,6 @@
             </td>
         </tr>
     </table>
+    <ngb-pagination [collectionSize]="" [(page)]="page" aria-label="Default pagination">
+    </ngb-pagination>
 </div>

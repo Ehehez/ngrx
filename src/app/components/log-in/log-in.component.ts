@@ -21,26 +21,19 @@ export class LogInComponent implements OnInit, OnDestroy {
 
   user: User = new User();
   state;
-  getState: Observable<any>;
   errorMessage: string | null;
   subs = new Subscription();
-  anterior;
 
   constructor(
     private store: Store<AppState>,
     private router: Router,
     private http: HttpClient
   ) {
-    this.getState = this.store.select(selectAuthState);
   }
 
   ngOnInit() {
     this.store.subscribe((o) => this.state = o);
     this.errorMessage = this.state.auth.errorMessage;
-
-    if (this.state.auth.user != null) {
-      this.anterior = this.state.auth.user.email;
-    } else this.anterior = "no";
   };
 
   onSubmit(): void {
@@ -54,9 +47,6 @@ export class LogInComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       let a = this.state.auth.isAuthenticated;
       if (a) {
-        /* if (this.anterior == this.state.auth.user.email) {
-           this.router.navigateByUrl('');
-         } else {*/
         this.http.get<User>('http://localhost:1337/users?email=' + this.user.email).subscribe((data) => {
           this.state.auth.user.id = data[0].id;
           this.store.dispatch({
@@ -75,8 +65,6 @@ export class LogInComponent implements OnInit, OnDestroy {
           }
           this.router.navigateByUrl('');
         });
-
-        /*}*/
       }
     }, 400);
 

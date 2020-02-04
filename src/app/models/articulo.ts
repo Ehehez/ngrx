@@ -3,5 +3,6 @@ export class Articulo {
     name?: string;
     price: any;
     quantity: number;
+    idCategoria: number;
 }
 

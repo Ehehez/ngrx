@@ -51,6 +51,7 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
 
+
     this.subs.add(this.store.subscribe(o => this.state = o));
 
     this.numero(this.articulo.id);
@@ -61,6 +62,14 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
     this.shopItem.name = this.articulo.name;
     this.shopItem.price = this.articulo.price;
     this.shopItem.quantity = this.articulo.quantity;
+    this.state.shopcart.items.forEach((data) => {
+      if (data.id === this.shopItem.id) {
+        data.quantity = this.shopItem.quantity;
+      }
+    });
+    console.log(this.state.shopcart);
+    let action = new ShopcartAction(ShopcartActionTypes.PUSH, this.state.shopcart);
+    this.store.dispatch(action);
   }
   private increment() {
 

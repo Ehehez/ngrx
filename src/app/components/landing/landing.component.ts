@@ -20,14 +20,17 @@ export class LandingComponent implements OnInit, OnDestroy {
   @Input('default-number') defaultNumber: number;
 
   private shopItem: Articulo = null;
-  private lista: Articulo;
+  private lista;
   getState: Observable<any>;
   isAuthenticated = false;
   user = null;
   errorMessage = null;
   subs = new Subscription();
   state;
-
+  categorias;
+  aux = [];
+  aux2;
+  size;
   constructor(
     private router: Router, private http: HttpClient,
     private store: Store<AppState>, private bd: AccesoBDService,
@@ -36,6 +39,8 @@ export class LandingComponent implements OnInit, OnDestroy {
     this.getState = this.store.select((state) => { return state.auth; })
     this.subs.add(this.bd.getArticulos().subscribe(list => {
       this.lista = list;
+      this.size = this.lista.length;
+      this.aux2 = list;
     }));
   }
 
@@ -44,6 +49,21 @@ export class LandingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
+    this.subs.add(this.bd.getCategorias().subscribe((x) => {
+      this.categorias = x;
+      this.categorias.unshift({ id: 0, Name: "Todos" });
+      this.categorias.forEach((x) => {
+        console.log("ah");
+        if (x.CategoriaPadre != null) {
+          let a = this.categorias.find((c) => x.CategoriaPadre == c.id);
+          x.Name = a.Name + " > " + x.Name;
+        }
+      });
+    }))
+
+
+
     this.shopItem = new Articulo();
     this.subs.add(this.store.subscribe(o => this.state = o));
     if (this.state.auth.isAuthenticated === false) {
@@ -70,6 +90,30 @@ export class LandingComponent implements OnInit, OnDestroy {
   private goToHistorial() {
     this.router.navigate(['/historial']);
   }
+
+  filter() {
+    this.lista = this.aux2;
+
+    let id = (<HTMLInputElement>document.getElementById('cat')).value;
+    if (id != "0") {
+      for (let index = 0; index < this.lista.length; index++) {
+        console.log(this.aux);
+        if (this.lista[index].IdCategoria == id) {
+          this.aux.push(this.lista[index]);
+          console.log("wat");
+        } else {
+          this.categorias.forEach(element => {
+            if (element.CategoriaPadre == id && element.id == this.lista[index].IdCategoria) {
+              this.aux.push(this.lista[index]);
+            }
+          });
+        }
+      }
+
+      console.log(this.aux);
+      this.lista = this.aux;
+      this.aux = [];
+    }
+    this.size = this.lista.length;
+  }
 }
-
-
