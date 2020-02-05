@@ -1,1 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
+#btn-añadir{
+    display: none;
+}
+#menu{
+    display: inline-block;
+}
+.btn-primary-outline {
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+#drop {
+   border:0px;
+   outline:0px;
+}
+
+.modal-dialog{
+    min-width: 850px !important;
+}

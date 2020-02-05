@@ -49,10 +49,10 @@ export class BasketComponent implements OnInit, OnDestroy {
     this.initBooks();
     this.isAuthenticated = this.state.isAuthenticated;
 
-    /*this.subs.add(this.getState.subscribe((state) => {
-      
-      this.errorMessage = state.errorMessage;
-    }));*/
+    /*if (this.state.auth.user.role == "Admin") {
+      let a = document.getElementById('btn-añadir');
+      a.style.display = "inline-block";
+    }*/
     this.user = this.state.auth.user.email;
 
   }
@@ -147,7 +147,16 @@ export class BasketComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('/log-in');
     }
   }
+  goToAdd() {
+    this.router.navigateByUrl('/addprod');
+  }
+  goToRemove() {
+    this.router.navigateByUrl('/delprod');
+  }
 
+  goToAddCat() {
+    this.router.navigateByUrl('/addcat');
+  }
 }
 
 

@@ -58,6 +58,7 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
     if (this.state.shopcart.cnt > 0) {
       this.shopItem.lastQuantity = this.shopItem.count;
     }
+    let distinto = false;
     this.shopItem.id = this.articulo.id;
     this.shopItem.name = this.articulo.name;
     this.shopItem.price = this.articulo.price;
@@ -65,10 +66,26 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
     this.state.shopcart.items.forEach((data) => {
       if (data.id === this.shopItem.id) {
         data.quantity = this.shopItem.quantity;
+        if (data.price != this.shopItem.price) {
+          distinto = true;
+          data.price = this.shopItem.price;
+        }
       }
     });
-    let action = new ShopcartAction(ShopcartActionTypes.PUSH, this.state.shopcart);
-    this.store.dispatch(action);
+    if (distinto) {
+      this.state.shopcart.cnt = 0;
+      this.state.shopcart.sum = 0;
+      this.state.shopcart.items.forEach(x => {
+        this.state.shopcart.cnt += x.count;
+        this.state.shopcart.sum += x.count * x.price;
+      });
+      let action = new ShopcartAction(ShopcartActionTypes.PUSH, this.state.shopcart);
+      this.store.dispatch(action);
+    } else {
+      let action = new ShopcartAction(ShopcartActionTypes.PUSH, this.state.shopcart);
+      this.store.dispatch(action);
+    }
+
   }
   private increment() {
 

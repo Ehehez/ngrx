@@ -34,6 +34,10 @@ export class HistorialComponent implements OnInit, OnDestroy {
     if (!this.state.auth.isAuthenticated) {
       this.router.navigateByUrl('/log-in');
     } else {
+      /*if (this.state.auth.user.role == "Admin") {
+        let a = document.getElementById('btn-añadir');
+        a.style.display = "inline-block";
+      }*/
       this.user = this.state.auth.user.email;
       this.subs.add(this.bd.getOrders().subscribe((data) => {
         data.forEach(orden => {
@@ -62,6 +66,17 @@ export class HistorialComponent implements OnInit, OnDestroy {
     if (this.state.auth.isAuthenticated == false) {
       this.router.navigateByUrl('/log-in');
     }
+  }
+
+  goToAdd() {
+    this.router.navigateByUrl('/addprod');
+  }
+  goToRemove() {
+    this.router.navigateByUrl('/delprod');
+  }
+
+  goToAddCat() {
+    this.router.navigateByUrl('/addcat');
   }
 }
 

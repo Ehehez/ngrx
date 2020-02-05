@@ -48,11 +48,11 @@ export class LogInComponent implements OnInit, OnDestroy {
       let a = this.state.auth.isAuthenticated;
       if (a) {
         this.http.get<User>('http://localhost:1337/users?email=' + this.user.email).subscribe((data) => {
-          console.log(data);
           this.state.auth.user.id = data[0].id;
           this.store.dispatch({
-            type: AuthActionTypes.SETID, payload: {
+            type: AuthActionTypes.SETIDROLE, payload: {
               id: data[0].id,
+              role: data[0].role.name,
             }
           })
           if (data[0].carrito != null) {

@@ -10,7 +10,7 @@ export enum AuthActionTypes {
     SIGNUP_FAILURE = '[Auth] Signup Failure',
     LOGOUT = '[Auth] Logout',
     GET_STATUS = '[Auth] Get Status',
-    SETID = '[Auth] Set id'
+    SETIDROLE = '[Auth] Set id and role'
 }
 
 export class LogIn implements Action {
@@ -51,8 +51,8 @@ export class GetStatus implements Action {
     readonly type = AuthActionTypes.GET_STATUS;
 }
 
-export class SetId implements Action {
-    readonly type = AuthActionTypes.SETID;
+export class SetIdRole implements Action {
+    readonly type = AuthActionTypes.SETIDROLE;
     constructor(public payload: any) { }
 }
 export type All =
@@ -64,4 +64,4 @@ export type All =
     | SignUpFailure
     | LogOut
     | GetStatus
-    | SetId;
+    | SetIdRole;

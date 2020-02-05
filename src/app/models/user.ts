@@ -5,4 +5,5 @@ export class User {
     password?: string;
     token?: string;
     carrito?: string;
+    role?: string;
 }

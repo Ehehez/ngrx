@@ -1,0 +1,77 @@
+<div>
+
+    <div ngbDropdown class="d-inline-block">
+        <button class="btn btn-default" ngbDropdownToggle>Admin</button>
+        <div ngbDropdownMenu id="drop">
+            <button class="btn btn-default w-100" (click)="goToAdd()">
+                <i class="fa fa-plus "></i> Productos </button>
+            <button class="btn btn-default w-100">
+                <i class=" fa fa-plus"></i> Categorias </button>
+        </div>
+    </div>
+
+
+
+    <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
+    <button class="btn btn-primary-outline float-right" [disabled]="true">Logeado como
+        {{state.auth.user.email}}</button>
+</div>
+<br>
+<br>
+
+<div>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th class="text-center">ID</th>
+                <th class="text-center">Categoría</th>
+                <th class="text-center">Categoría Padre</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tr *ngFor="let cat of categorias | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+            <td class="text-center">{{cat.id}}</td>
+            <td class="text-center">{{cat.Name}}</td>
+            <td class="text-center">{{getCategoria(cat)}}</td>
+            <td class="text-center">
+                <button class="btn btn-default" (click)="open(content,cat.id)">Editar</button>
+                <button class="btn btn-default" (click)="delete(list.id)">Borrar</button>
+            </td>
+        </tr>
+    </table>
+    <ngb-pagination [(page)]="page" [pageSize]="pageSize" [collectionSize]="size"></ngb-pagination>
+</div>
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Editar Articulo</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body w-75">
+        <div class="divtabla">
+            <table [formGroup]="form" class="table">
+                <tr>
+                    <th><label>Nombre</label></th>
+                    <th><label>Categoría Padre</label></th>
+
+                </tr>
+                <tr>
+                    <td><input type="text" formControlName="Name"><input type="hidden"></td>
+                    <td>
+                        <select formControlName="CategoriaPadre">
+                            <option *ngFor="let cat of catPadre" value="{{cat.id}}">
+                                {{cat.Name}}</option>
+                        </select>
+                    </td>
+                </tr>
+                <br>
+                <tr>
+                    <td><button class="btn" (click)="onSubmit()">Submit</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</ng-template>

@@ -1,32 +1,47 @@
+///////////////////////////MODULOS///////////////////////////
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
-
 import { AppRoutingModule } from './app-routing.module';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrModule } from 'ngx-toastr';
+
+/////////////////////////SERVICES//////////////////////////
+import { AuthService } from './services/auth.service';
+import { AuthGuardService } from './services/auth-guard.service';
+import { BasketService } from './services/basket.service';
+import { ShopcartService } from './services/shopcart.service';
+import { AccesoBDService } from './services/acceso-bd.service';
+import { AuthGuardRoleService } from './services/auth-guard-role.service';
+
+
+////////////////////////COMPONENTS////////////////////////
 import { AppComponent } from './app.component';
 import { LandingComponent } from './components/landing/landing.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { LogInComponent } from './components/log-in/log-in.component';
-import { AuthService } from './services/auth.service';
+import { BasketComponent } from './components/basket/basket.component';
+import { ProductBookingComponent } from './components/product-booking/product-booking.component';
+import { AddProductComponent } from './components/add-product/add-product.component';
+import { HistorialComponent } from './components/historial/historial.component';
+import { AddcatComponent } from './components/addcat/addcat.component';
+
+//////////////////////////STORE///////////////////////////////
 import { AuthEffects } from './store/auth/auth.effects';
 import { reducers } from './store/app.states';
 import { TokenInterceptor, ErrorInterceptor } from './services/token.interceptor';
-import { BasketComponent } from './components/basket/basket.component';
-import { AuthGuardService } from './services/auth-guard.service';
-import { ProductBookingComponent } from './components/product-booking/product-booking.component';
-import { BasketService } from './services/basket.service';
-import { HistorialComponent } from './components/historial/historial.component';
 import { storageMetaReducer } from './store/reducers/storage.metareducer';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ShopcartService } from './services/shopcart.service';
-import { ToastrModule } from 'ngx-toastr';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { AccesoBDService } from './services/acceso-bd.service';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+
+
+
+
 
 
 @NgModule({
@@ -37,7 +52,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BasketComponent,
     LandingComponent,
     ProductBookingComponent,
-    HistorialComponent
+    HistorialComponent,
+    AddProductComponent,
+    AddcatComponent
   ],
   imports: [
     BrowserModule,
@@ -51,6 +68,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     }),
     AngularFontAwesomeModule,
     NgbModule,
+    ReactiveFormsModule,
     ToastrModule.forRoot({
       timeOut: 2000,
       positionClass: 'toast-top-right'
@@ -62,6 +80,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BasketService,
     ShopcartService,
     AccesoBDService,
+    AuthGuardRoleService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

@@ -24,7 +24,7 @@ export function reducer(state = initialState, action: All): State {
                 isAuthenticated: true,
                 user: {
                     token: action.payload.token,
-                    email: action.payload.email
+                    email: action.payload.email,
                 },
                 errorMessage: null
             };
@@ -66,12 +66,13 @@ export function reducer(state = initialState, action: All): State {
             };
 
         }
-        case AuthActionTypes.SETID: {
+        case AuthActionTypes.SETIDROLE: {
             return {
                 ...state,
                 user: {
                     ...state.user,
                     id: action.payload.id,
+                    role: action.payload.role,
                 }
             }
         }

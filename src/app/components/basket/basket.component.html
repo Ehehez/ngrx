@@ -1,14 +1,26 @@
 <div>
+    <div id="menu">
+        <button class="btn btn-default" (click)="goToProducts()">
+            <i class="fa fa-snowflake-o"></i> Productos </button>
 
-    <button class="btn btn-default" (click)="goToProducts()">
-        <i class="fa fa-snowflake-o"></i> Productos </button>
-
-    <button class="btn btn-default" id="botBasket">
-        <i class="fa fa-shopping-cart "></i> Carrito ({{state.shopcart.cnt}}) {{state.shopcart.sum}}€</button>
+        <button class="btn btn-default" id="botBasket">
+            <i class="fa fa-shopping-cart "></i> Carrito ({{state.shopcart.cnt}}) {{state.shopcart.sum}}€</button>
 
 
-    <button class="btn btn-default" (click)="goToHistorial()">
-        <i class="fa fa-list"></i> Historial </button>
+        <button class="btn btn-default" (click)="goToHistorial()">
+            <i class="fa fa-list"></i> Historial </button>
+    </div>
+    <!--<div ngbDropdown class="d-inline-block" id="btn-añadir">
+        <button class="btn btn-default" ngbDropdownToggle>Admin</button>
+        <div ngbDropdownMenu id="drop">
+            <button class="btn btn-default w-100" (click)="goToAdd()">
+                <i class="fa fa-plus "></i> Añadir Producto </button>
+            <button class="btn btn-default w-100" (click)="goToRemove()">
+                <i class="fa fa-plus"></i> Borrar Producto </button>
+            <button class="btn btn-default w-100" (click)="goToAddCat()">
+                <i class="fa fa-plus"></i> Añadir Categoria </button>
+        </div>
+    </div>-->
 
     <button class='btn btn-success align-right' *ngIf="(shopcart$ | async).items.length > 0" (click)=" saveOrder()">
         <i class="fa fa-save"></i> Send Order </button>

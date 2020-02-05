@@ -1,0 +1,113 @@
+<div>
+    <!--<div id="menu">
+        <button class="btn btn-default" alignment="right" (click)="goToProducts()">
+            <i class="fa fa-snowflake-o"></i> Productos </button>
+
+        <button class="btn btn-default" id="botBasket" (click)="goToBasket()">
+            <i class="fa fa-shopping-cart "></i> Carrito ({{state.shopcart.cnt}})
+            {{state.shopcart.sum}}€</button>
+
+        <button class="btn btn-default" (click)="goToHistorial()">
+            <i class="fa fa-list"></i> Historial </button>
+
+        <button class="btn btn-default">
+        <i class="fa fa-plus"></i> Añadir Producto </button>
+    </div>-->
+    <div ngbDropdown class="d-inline-block">
+        <button class="btn btn-default" ngbDropdownToggle>Admin</button>
+        <div ngbDropdownMenu id="drop">
+            <button class="btn btn-default w-100">
+                <i class="fa fa-plus "></i> Productos </button>
+            <!--   <button class="btn btn-default w-100" (click)="goToRemove()">
+                <i class="fa fa-plus"></i> Borrar Producto </button>-->
+            <button class="btn btn-default w-100" (click)="goToAddCat()">
+                <i class="fa fa-plus"></i> Categorias </button>
+        </div>
+    </div>
+
+
+    <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
+    <button class="btn btn-primary-outline float-right" [disabled]="true">Logeado como
+        {{state.auth.user.email}}</button>
+</div>
+<br>
+<div>
+    <br>
+    <select class="btn btn-default" id="cat" (change)="filter()">
+        <option *ngFor="let categoria of categorias" value="{{categoria.id}}">
+            {{categoria.Name}}
+        </option>
+    </select>
+    <!--<button class="btn btn-default" (click)="filter()">Filter</button>-->
+    <br>
+    <br>
+</div>
+<br>
+<div>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th class="text-center">ID</th>
+                <th class="text-center">Artículo</th>
+                <th class="text-center">Precio</th>
+                <th class="text-center">Stock</th>
+                <th class="text-center">Categoría</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tr *ngFor="let list of lista | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+            <td class="text-center">{{list.id}}</td>
+            <td>{{list.name}}</td>
+            <td class="text-center">{{list.price}}</td>
+            <td class="text-center">{{list.quantity}}</td>
+            <td class="text-center">{{getCategoria(list)}}</td>
+            <td class="text-center">
+                <button class="btn btn-default" (click)="open(content,list.id)">Editar</button>
+                <button class="btn btn-default" (click)="delete(list.id)">Borrar</button>
+            </td>
+        </tr>
+    </table>
+    <ngb-pagination [(page)]="page" [pageSize]="pageSize" [collectionSize]="size"></ngb-pagination>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Editar Articulo</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body w-75">
+        <div class="divtabla">
+            <table [formGroup]="form" class="table">
+                <tr>
+                    <th><label>Nombre</label></th>
+                    <th><label>Precio</label></th>
+                    <th><label>Stock</label></th>
+                    <th><label>Categoria</label></th>
+                </tr>
+                <tr>
+                    <td><input type="text" formControlName="name"><input type="hidden" formControlName="id">
+                    </td>
+                    <td>
+                        <input type="number" formControlName="price">
+                    </td>
+                    <td>
+                        <input type="number" formControlName="quantity">
+                    </td>
+                    <td>
+                        <select formControlName="IdCategoria">
+                            <option *ngFor="let categoria of categorias" value="{{categoria.id}}">
+                                {{categoria.Name}}
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <br>
+                <tr>
+                    <td><button class="btn" (click)="onSubmit(form.value.id)">Submit</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</ng-template>

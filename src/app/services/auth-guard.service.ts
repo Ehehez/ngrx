@@ -21,6 +21,9 @@ export class AuthGuardService implements CanActivate, OnDestroy {
     this.store.subscribe((o) => this.state = o);
     (this.state);
     if (this.state.auth.isAuthenticated === true && this.auth.getToken() != null) {
+      if (this.state.auth.user.role === "Admin") {
+        this.router.navigateByUrl('/addprod');
+      }
       return true;
     } else this.router.navigateByUrl('/log-in');
 

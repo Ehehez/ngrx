@@ -10,21 +10,21 @@
         <button class="btn btn-default" (click)="goToHistorial()">
             <i class="fa fa-list"></i> Historial </button>
     </div>
-    <!--<div ngbDropdown class="d-inline-block" id="btn-añadir" style="visibility: hidden">
+    <div ngbDropdown class="d-inline-block" id="btn-añadir">
         <button class="btn btn-default" ngbDropdownToggle>Admin</button>
         <div ngbDropdownMenu id="drop">
             <button class="btn btn-default w-100" (click)="goToAdd()">
                 <i class="fa fa-plus "></i> Añadir Producto </button>
-            <button class="btn btn-default w-100" (click)="goToRemove()">
-                <i class="fa fa-plus"></i> Borrar Producto </button>
+            <button class="btn btn-default w-100">
+                <i class=" fa fa-plus"></i> Borrar Producto </button>
             <button class="btn btn-default w-100" (click)="goToAddCat()">
                 <i class="fa fa-plus"></i> Añadir Categoria </button>
         </div>
-    </div>-->
+    </div>
 
     <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
     <button class="btn btn-primary-outline float-right" [disabled]="true">Logeado como
-        {{user}}</button>
+        {{state.auth.user.email}}</button>
 </div>
 <div>
     <br>
@@ -45,8 +45,7 @@
                 <th class="text-center">Artículo</th>
                 <th class="text-center">Precio</th>
                 <th class="text-center">Stock</th>
-                <th class="text-center">Categoria</th>
-                <th class="text-center">Shopping Cart</th>
+                <th class="text-center">Actions</th>
             </tr>
         </thead>
         <tr *ngFor="let list of lista | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
@@ -54,10 +53,8 @@
             <td>{{list.name}}</td>
             <td class="text-center">{{list.price}}</td>
             <td class="text-center">{{list.quantity}}</td>
-            <td class="text-center">{{getCategoria(list)}}</td>
             <td class="text-center">
-                <product-booking [product]="list" (emit-events)="setShopCart($event)">
-                </product-booking>
+                <button class="btn btn-default" (click)="delete(list.id)">Borrar</button>
             </td>
         </tr>
     </table>

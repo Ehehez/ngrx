@@ -7,6 +7,7 @@ import { AppState } from 'src/app/store/app.states';
 import { Store } from '@ngrx/store';
 import { LogOut } from 'src/app/store/auth/auth.actions';
 import { AccesoBDService } from '../../services/acceso-bd.service';
+import { elementEventFullName } from '@angular/compiler/src/view_compiler/view_compiler';
 
 
 @Component({
@@ -33,6 +34,8 @@ export class LandingComponent implements OnInit, OnDestroy {
   size;
   page;
   pageSize;
+  auxcat;
+  cont = 0;
   constructor(
     private router: Router, private http: HttpClient,
     private store: Store<AppState>, private bd: AccesoBDService,
@@ -53,11 +56,12 @@ export class LandingComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.page = 1;
     this.pageSize = 4;
-    /*this.size = this.lista.length;*/
     this.subs.add(this.bd.getCategorias().subscribe((x) => {
       this.categorias = x;
+      this.auxcat = x;
       this.categorias.unshift({ id: 0, Name: "Todos" });
       this.categorias.forEach((x) => {
+        this.cont++;
         if (x.CategoriaPadre != null) {
           let a = this.categorias.find((c) => x.CategoriaPadre == c.id);
           x.Name = a.Name + " > " + x.Name;
@@ -73,6 +77,12 @@ export class LandingComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('/log-in');
     } else {
       this.user = this.state.auth.user.email;
+      let a = document.getElementById('btn-añadir');
+      /*if (this.state.auth.user.role == "Admin") {
+        a.style.display = "inline-block";
+      } else {
+        a.style.display = "none";
+      }*/
     }
   }
 
@@ -114,5 +124,27 @@ export class LandingComponent implements OnInit, OnDestroy {
       this.aux = [];
     }
     this.size = this.lista.length;
+  }
+
+  goToAdd() {
+    this.router.navigateByUrl('/addprod');
+  }
+  goToRemove() {
+    this.router.navigateByUrl('/delprod');
+  }
+
+  goToAddCat() {
+    this.router.navigateByUrl('/addcat');
+  }
+
+  getCategoria(list) {
+    for (let index = 0; index < this.cont; index++) {
+      if (this.categorias[index].id == list.IdCategoria) {
+        return this.categorias[index].Name;
+      }
+
+    }
+
+    return "";
   }
 }
