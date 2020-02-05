@@ -16,12 +16,13 @@
 </div>
 <div>
     <br>
-    <select class="btn btn-default" id="cat">
+    <select class="btn btn-default" id="cat" (change)="filter()">
         <option *ngFor="let categoria of categorias" value="{{categoria.id}}">
             {{categoria.Name}}
         </option>
     </select>
-    <button class="btn btn-default" (click)="filter()">Filter</button>
+    <!--<button class="btn btn-default" (click)="filter()">Filter</button>-->
+    <br>
     <br>
 </div>
 <div>
@@ -46,6 +47,5 @@
             </td>
         </tr>
     </table>
-    <ngb-pagination [collectionSize]="" [(page)]="page" aria-label="Default pagination">
-    </ngb-pagination>
+    <ngb-pagination [(page)]="page" [pageSize]="pageSize" [collectionSize]="size"></ngb-pagination>
 </div>

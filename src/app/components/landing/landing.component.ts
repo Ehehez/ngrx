@@ -31,6 +31,8 @@ export class LandingComponent implements OnInit, OnDestroy {
   aux = [];
   aux2;
   size;
+  page;
+  pageSize;
   constructor(
     private router: Router, private http: HttpClient,
     private store: Store<AppState>, private bd: AccesoBDService,
@@ -49,12 +51,13 @@ export class LandingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    this.page = 1;
+    this.pageSize = 4;
+    /*this.size = this.lista.length;*/
     this.subs.add(this.bd.getCategorias().subscribe((x) => {
       this.categorias = x;
       this.categorias.unshift({ id: 0, Name: "Todos" });
       this.categorias.forEach((x) => {
-        console.log("ah");
         if (x.CategoriaPadre != null) {
           let a = this.categorias.find((c) => x.CategoriaPadre == c.id);
           x.Name = a.Name + " > " + x.Name;
@@ -97,10 +100,8 @@ export class LandingComponent implements OnInit, OnDestroy {
     let id = (<HTMLInputElement>document.getElementById('cat')).value;
     if (id != "0") {
       for (let index = 0; index < this.lista.length; index++) {
-        console.log(this.aux);
         if (this.lista[index].IdCategoria == id) {
           this.aux.push(this.lista[index]);
-          console.log("wat");
         } else {
           this.categorias.forEach(element => {
             if (element.CategoriaPadre == id && element.id == this.lista[index].IdCategoria) {
@@ -109,8 +110,6 @@ export class LandingComponent implements OnInit, OnDestroy {
           });
         }
       }
-
-      console.log(this.aux);
       this.lista = this.aux;
       this.aux = [];
     }

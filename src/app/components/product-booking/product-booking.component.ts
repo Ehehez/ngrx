@@ -67,7 +67,6 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
         data.quantity = this.shopItem.quantity;
       }
     });
-    console.log(this.state.shopcart);
     let action = new ShopcartAction(ShopcartActionTypes.PUSH, this.state.shopcart);
     this.store.dispatch(action);
   }
