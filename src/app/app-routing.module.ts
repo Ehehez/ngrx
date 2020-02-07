@@ -8,8 +8,8 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { HistorialComponent } from './components/historial/historial.component';
 import { AddProductComponent } from './components/add-product/add-product.component';
 import { AuthGuardRoleService } from './services/auth-guard-role.service';
-import { DelProductComponent } from './components/del-product/del-product.component';
 import { AddcatComponent } from './components/addcat/addcat.component';
+import { FichaArticuloComponent } from './components/ficha-articulo/ficha-articulo.component';
 
 const routes: Routes = [
   { path: 'log-in', component: LogInComponent },
@@ -18,8 +18,8 @@ const routes: Routes = [
   { path: 'basket', component: BasketComponent, canActivate: [AuthGuardService] },
   { path: 'historial', component: HistorialComponent, canActivate: [AuthGuardService] },
   { path: 'addprod', component: AddProductComponent, canActivate: [AuthGuardRoleService] },
-  { path: 'delprod', component: DelProductComponent, canActivate: [AuthGuardRoleService] },
   { path: 'addcat', component: AddcatComponent, canActivate: [AuthGuardRoleService] },
+  { path: 'articulo/:id', component: FichaArticuloComponent, canActivate: [AuthGuardService] },
   { path: '**', redirectTo: '/log-in' }
 ];
 

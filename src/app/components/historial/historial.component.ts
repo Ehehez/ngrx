@@ -21,6 +21,11 @@ export class HistorialComponent implements OnInit, OnDestroy {
   getState;
   user;
   state;
+  page = 1;
+  pageSize = 5;
+  size;
+  elPerPage = [5, 10, 20, 50];
+
 
   constructor(private store: Store<AppState>, private http: HttpClient,
     private router: Router, private basket: BasketService,
@@ -34,16 +39,13 @@ export class HistorialComponent implements OnInit, OnDestroy {
     if (!this.state.auth.isAuthenticated) {
       this.router.navigateByUrl('/log-in');
     } else {
-      /*if (this.state.auth.user.role == "Admin") {
-        let a = document.getElementById('btn-añadir');
-        a.style.display = "inline-block";
-      }*/
       this.user = this.state.auth.user.email;
       this.subs.add(this.bd.getOrders().subscribe((data) => {
         data.forEach(orden => {
           if (orden.Comprador == this.user) {
             this.compras.push(orden);
           }
+          this.size = this.compras.length;
         })
       }));
     }
@@ -77,6 +79,10 @@ export class HistorialComponent implements OnInit, OnDestroy {
 
   goToAddCat() {
     this.router.navigateByUrl('/addcat');
+  }
+
+  changeSize() {
+    this.pageSize = parseInt((<HTMLInputElement>document.getElementById('epp')).value);
   }
 }
 

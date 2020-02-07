@@ -30,7 +30,6 @@ export class DelProductComponent implements OnInit {
 
   ngOnInit() {
     this.subs.add(this.bd.getArticulos().subscribe(list => {
-      console.log(list);
       this.lista = list;
       this.size = this.lista.length;
       this.aux2 = list;

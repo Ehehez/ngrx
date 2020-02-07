@@ -37,6 +37,8 @@ import { AuthEffects } from './store/auth/auth.effects';
 import { reducers } from './store/app.states';
 import { TokenInterceptor, ErrorInterceptor } from './services/token.interceptor';
 import { storageMetaReducer } from './store/reducers/storage.metareducer';
+import { FichaArticuloComponent } from './components/ficha-articulo/ficha-articulo.component';
+import { FichaArticuloService } from './services/ficha-articulo.service';
 
 
 
@@ -54,7 +56,8 @@ import { storageMetaReducer } from './store/reducers/storage.metareducer';
     ProductBookingComponent,
     HistorialComponent,
     AddProductComponent,
-    AddcatComponent
+    AddcatComponent,
+    FichaArticuloComponent
   ],
   imports: [
     BrowserModule,
@@ -81,6 +84,7 @@ import { storageMetaReducer } from './store/reducers/storage.metareducer';
     ShopcartService,
     AccesoBDService,
     AuthGuardRoleService,
+    FichaArticuloService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

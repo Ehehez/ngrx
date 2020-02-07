@@ -7,7 +7,6 @@ import { AppState } from 'src/app/store/app.states';
 import { Store } from '@ngrx/store';
 import { LogOut } from 'src/app/store/auth/auth.actions';
 import { AccesoBDService } from '../../services/acceso-bd.service';
-import { elementEventFullName } from '@angular/compiler/src/view_compiler/view_compiler';
 
 
 @Component({
@@ -36,6 +35,9 @@ export class LandingComponent implements OnInit, OnDestroy {
   pageSize;
   auxcat;
   cont = 0;
+
+  elPerPage = [5, 10, 20, 50];
+
   constructor(
     private router: Router, private http: HttpClient,
     private store: Store<AppState>, private bd: AccesoBDService,
@@ -55,7 +57,7 @@ export class LandingComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.page = 1;
-    this.pageSize = 4;
+    this.pageSize = 5;
     this.subs.add(this.bd.getCategorias().subscribe((x) => {
       this.categorias = x;
       this.auxcat = x;
@@ -78,11 +80,6 @@ export class LandingComponent implements OnInit, OnDestroy {
     } else {
       this.user = this.state.auth.user.email;
       let a = document.getElementById('btn-añadir');
-      /*if (this.state.auth.user.role == "Admin") {
-        a.style.display = "inline-block";
-      } else {
-        a.style.display = "none";
-      }*/
     }
   }
 
@@ -146,5 +143,13 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
 
     return "";
+  }
+
+  changeSize() {
+    this.pageSize = parseInt((<HTMLInputElement>document.getElementById('epp')).value);
+  }
+
+  details(id) {
+    this.router.navigateByUrl('/articulo/' + id);
   }
 }

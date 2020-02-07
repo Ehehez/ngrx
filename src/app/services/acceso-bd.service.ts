@@ -54,9 +54,16 @@ export class AccesoBDService {
     return this.http.put('http://localhost:1337/categorias/' + id, payload);
   }
   getCatName(payload) {
-    return this.http.get('http://localhost:1337/categorias?Name=' + payload.name + '&CategoriaPadre=' + payload.categoriaPadre);
+    return this.http.get('http://localhost:1337/categorias?Name=' + payload.Name + '&CategoriaPadre=' + payload.CategoriaPadre);
   }
   createCategoria(payload) {
+    if (payload.CategoriaPadre == 0 || payload.CategoriaPadre == "") {
+      payload.CategoriaPadre = null;
+    }
     return this.http.post('http://localhost:1337/categorias', payload);
+  }
+
+  deleteCat(id) {
+    return this.http.delete('http://localhost:1337/categorias/' + id);
   }
 }

@@ -10,7 +10,7 @@
         <button class="btn btn-default" (click)="goToHistorial()">
             <i class="fa fa-list"></i> Historial </button>
     </div>
-    <!--<div ngbDropdown class="d-inline-block" id="btn-añadir">
+    <div ngbDropdown class="d-inline-block" id="btn-añadir">
         <button class="btn btn-default" ngbDropdownToggle>Admin</button>
         <div ngbDropdownMenu id="drop">
             <button class="btn btn-default w-100" (click)="goToAdd()">
@@ -20,10 +20,8 @@
             <button class="btn btn-default w-100" (click)="goToAddCat()">
                 <i class="fa fa-plus"></i> Añadir Categoria </button>
         </div>
-    </div>-->
+    </div>
 
-    <button class='btn btn-success align-right' *ngIf="(shopcart$ | async).items.length > 0" (click)=" saveOrder()">
-        <i class="fa fa-save"></i> Send Order </button>
 
     <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
     <button class="btn btn-primary-outline float-right" [disabled]="true">Logeado como
@@ -33,7 +31,8 @@
     <br>
     <br>
 </div>
-
+<button class='btn btn-success align-right' *ngIf="(shopcart$ | async).items.length > 0" (click)=" saveOrder()">
+    <i class="fa fa-save"></i> Send Order </button>
 <div id=" basket">
     <table class="table table-inverse" *ngIf="(state.shopcart ).items.length > 0; else vacio">
         <thead>

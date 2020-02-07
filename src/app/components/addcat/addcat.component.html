@@ -10,13 +10,17 @@
         </div>
     </div>
 
-
+    <button class="btn btn-default" (click)="open(content)">Nueva Categoria</button>
 
     <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
     <button class="btn btn-primary-outline float-right" [disabled]="true">Logeado como
         {{state.auth.user.email}}</button>
 </div>
 <br>
+<select class="float-right" (change)="changeSize()" id="epp">
+    <option *ngFor="let el of elPerPage" value="{{el}}">{{el}}</option>
+</select>
+<label class="float-right">Elementos por página : </label>
 <br>
 
 <div>
@@ -35,7 +39,7 @@
             <td class="text-center">{{getCategoria(cat)}}</td>
             <td class="text-center">
                 <button class="btn btn-default" (click)="open(content,cat.id)">Editar</button>
-                <button class="btn btn-default" (click)="delete(list.id)">Borrar</button>
+                <button class="btn btn-default" (click)="delete(cat.id)">Borrar</button>
             </td>
         </tr>
     </table>
@@ -59,7 +63,7 @@
 
                 </tr>
                 <tr>
-                    <td><input type="text" formControlName="Name"><input type="hidden"></td>
+                    <td><input type="text" formControlName="Name"><input type="hidden" formControlName="id"></td>
                     <td>
                         <select formControlName="CategoriaPadre">
                             <option *ngFor="let cat of catPadre" value="{{cat.id}}">
@@ -69,7 +73,8 @@
                 </tr>
                 <br>
                 <tr>
-                    <td><button class="btn" (click)="onSubmit()">Submit</button></td>
+                    <td><button class="btn" (click)="onSubmit()" [disabled]="!form.valid">Submit</button>
+                    </td>
                 </tr>
             </table>
         </div>

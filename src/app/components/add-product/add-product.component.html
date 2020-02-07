@@ -24,7 +24,7 @@
                 <i class="fa fa-plus"></i> Categorias </button>
         </div>
     </div>
-
+    <button class="btn btn-default" (click)="open(content)">Nuevo Articulo</button>
 
     <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
     <button class="btn btn-primary-outline float-right" [disabled]="true">Logeado como
@@ -39,6 +39,11 @@
         </option>
     </select>
     <!--<button class="btn btn-default" (click)="filter()">Filter</button>-->
+
+    <select class="float-right" (change)="changeSize()" id="epp">
+        <option *ngFor="let el of elPerPage" value="{{el}}">{{el}}</option>
+    </select>
+    <label class="float-right">Elementos por página : </label>
     <br>
     <br>
 </div>
@@ -52,6 +57,7 @@
                 <th class="text-center">Precio</th>
                 <th class="text-center">Stock</th>
                 <th class="text-center">Categoría</th>
+                <th class="text-center" colspan="2">Url</th>
                 <th class="text-center">Actions</th>
             </tr>
         </thead>
@@ -61,6 +67,7 @@
             <td class="text-center">{{list.price}}</td>
             <td class="text-center">{{list.quantity}}</td>
             <td class="text-center">{{getCategoria(list)}}</td>
+            <td class="text-center" colspan="2">{{list.Url}}</td>
             <td class="text-center">
                 <button class="btn btn-default" (click)="open(content,list.id)">Editar</button>
                 <button class="btn btn-default" (click)="delete(list.id)">Borrar</button>
@@ -68,6 +75,7 @@
         </tr>
     </table>
     <ngb-pagination [(page)]="page" [pageSize]="pageSize" [collectionSize]="size"></ngb-pagination>
+
 </div>
 
 <ng-template #content let-modal>
@@ -81,10 +89,10 @@
         <div class="divtabla">
             <table [formGroup]="form" class="table">
                 <tr>
-                    <th><label>Nombre</label></th>
-                    <th><label>Precio</label></th>
-                    <th><label>Stock</label></th>
-                    <th><label>Categoria</label></th>
+                    <th class="text-center"><label>Nombre</label></th>
+                    <th class="text-center"><label>Precio</label></th>
+                    <th class="text-center"><label>Stock</label></th>
+                    <th class="text-center"><label>Categoria</label></th>
                 </tr>
                 <tr>
                     <td><input type="text" formControlName="name"><input type="hidden" formControlName="id">
@@ -97,15 +105,23 @@
                     </td>
                     <td>
                         <select formControlName="IdCategoria">
-                            <option *ngFor="let categoria of categorias" value="{{categoria.id}}">
+                            <option *ngFor="let categoria of categor" value="{{categoria.id}}">
                                 {{categoria.Name}}
                             </option>
                         </select>
                     </td>
                 </tr>
-                <br>
                 <tr>
-                    <td><button class="btn" (click)="onSubmit(form.value.id)">Submit</button></td>
+                    <th class="text-center">URL</th>
+                    <td><input type="text" class="w-75" formControlName="Url"></td>
+                    <td>
+                        <input type="file" (change)="onFileChanged($event)">
+                    </td>
+                    <button (click)="onUpload()">Upload!</button>
+                    <br>
+                <tr>
+                    <td><button class="btn" (click)="onSubmit(form.value.id)" [disabled]="!form.valid">Submit</button>
+                    </td>
                 </tr>
             </table>
         </div>

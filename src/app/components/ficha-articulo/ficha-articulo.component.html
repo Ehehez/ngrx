@@ -1,6 +1,6 @@
 <div>
     <div id="menu">
-        <button class="btn btn-default" alignment="right">
+        <button class="btn btn-default" alignment="right" (click)="goToProducts()">
             <i class="fa fa-snowflake-o"></i> Productos </button>
 
         <button class="btn btn-default" id="botBasket" (click)="goToBasket()">
@@ -26,18 +26,9 @@
     <button class="btn btn-primary-outline float-right" [disabled]="true">Logeado como
         {{user}}</button>
 </div>
+
 <div>
     <br>
-    <select class="btn btn-default" id="cat" (change)="filter()">
-        <option *ngFor="let categoria of categorias" value="{{categoria.id}}">
-            {{categoria.Name}}
-        </option>
-    </select>
-    <!--<button class="btn btn-default" (click)="filter()">Filter</button>-->
-    <select class="float-right" (change)="changeSize()" id="epp">
-        <option *ngFor="let el of elPerPage" value="{{el}}">{{el}}</option>
-    </select>
-    <label class="float-right">Elementos por página : </label>
     <br>
     <br>
 </div>
@@ -50,20 +41,41 @@
                 <th class="text-center">Precio</th>
                 <th class="text-center">Stock</th>
                 <th class="text-center">Categoria</th>
-                <th class="text-center">Shopping Cart</th>
             </tr>
         </thead>
-        <tr *ngFor="let list of lista | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
-            <td class="text-center" (click)="details(list.id)">{{list.id}}</td>
-            <td>{{list.name}}</td>
-            <td class="text-center">{{list.price}}</td>
-            <td class="text-center">{{list.quantity}}</td>
-            <td class="text-center">{{getCategoria(list)}}</td>
-            <td class="text-center">
-                <product-booking [product]="list" (emit-events)="setShopCart($event)">
-                </product-booking>
-            </td>
+        <tr>
+            <td class="text-center">{{articulo.id}}</td>
+            <td>{{articulo.name}}</td>
+            <td class="text-center">{{articulo.price}}</td>
+            <td class="text-center">{{articulo.quantity}}</td>
+            <td class="text-center">{{getCategoria(articulo)}}</td>
+
         </tr>
     </table>
-    <ngb-pagination [(page)]="page" [pageSize]="pageSize" [collectionSize]="size"></ngb-pagination>
 </div>
+
+
+<!--<form>
+    <div class="file-field md-form">
+        <div mdbBtn color="primary" size="sm" class="waves-light" mdbWavesEffect>
+            <span>Choose file</span>
+            <input type="file" mdbFileSelect (uploadOutput)="onUploadOutput($event)" [uploadInput]="uploadInput">
+        </div>
+        <div class="file-path-wrapper">
+            <input class="file-path" type="text" placeholder="Upload your file" [value]="showFiles()">
+        </div>
+    </div>
+    <button mdbBtn color="primary" (click)="startUpload()">Start uploading</button>
+</form>-->
+
+<ngb-carousel *ngIf="articulo.Images">
+    <ng-template ngbSlide *ngFor="let img of articulo.Images">
+        <div class="picsum-img-wrapper">
+            <img [src]="img.url" width="100%" alt="Random first slide">
+        </div>
+        <!--<div class="carousel-caption">
+            <h3>First slide label</h3>
+            <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+        </div>-->
+    </ng-template>
+</ngb-carousel>

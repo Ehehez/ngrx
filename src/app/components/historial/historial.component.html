@@ -9,7 +9,7 @@
         <button class="btn btn-default">
             <i class="fa fa-list"></i> Historial </button>
     </div>
-    <!--<div ngbDropdown class="d-inline-block" id="btn-añadir">
+    <div ngbDropdown class="d-inline-block" id="btn-añadir">
         <button class="btn btn-default" ngbDropdownToggle>Admin</button>
         <div ngbDropdownMenu id="drop">
             <button class="btn btn-default w-100" (click)="goToAdd()">
@@ -19,7 +19,7 @@
             <button class="btn btn-default w-100" (click)="goToAddCat()">
                 <i class="fa fa-plus"></i> Añadir Categoria </button>
         </div>
-    </div>-->
+    </div>
 
     <button class="btn btn-primary float-right" (click)="logOut()">Log out</button>
     <button class="btn btn-primary-outline float-right" [disabled]="true">Logeado como
@@ -27,6 +27,10 @@
 </div>
 <div>
     <br>
+    <select class="float-right" (change)="changeSize()" id="epp">
+        <option *ngFor="let el of elPerPage" value="{{el}}">{{el}}</option>
+    </select>
+    <label class="float-right">Elementos por página : </label>
     <br>
 </div>
 <div id="historial">
@@ -40,7 +44,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let compra of compras">
+            <tr *ngFor="let compra of compras | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
                 <td>{{compra.id}}</td>
                 <td>{{compra.fechaCompra}}</td>
                 <td>{{compra.coste}}</td>
@@ -57,4 +61,5 @@
             </tr>
         </tbody>
     </table>
+    <ngb-pagination [(page)]="page" [pageSize]="pageSize" [collectionSize]="size"></ngb-pagination>
 </div>
