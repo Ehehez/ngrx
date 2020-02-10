@@ -10,6 +10,7 @@ import { AppState } from 'src/app/store/app.states';
 import { ShopcartService } from 'src/app/services/shopcart.service';
 import { ToastrService } from 'ngx-toastr';
 import { AccesoBDService } from 'src/app/services/acceso-bd.service';
+import { isArray } from 'util';
 @Component({
   selector: 'product-booking',
   template: `
@@ -51,7 +52,6 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
 
-
     this.subs.add(this.store.subscribe(o => this.state = o));
 
     this.numero(this.articulo.id);
@@ -86,6 +86,7 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
       this.store.dispatch(action);
     }
 
+
   }
   private increment() {
 
@@ -95,13 +96,13 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
       this.shopItem.count += 1;
     }
 
-
   }
 
   private decrement() {
     if (this.shopItem.count > 0) {
       this.shopItem.count -= 1;
     }
+
   }
 
 
@@ -119,7 +120,6 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
 
       action = new ShopcartAction(ShopcartActionTypes.PUSH, this.state.shopcart);
       this.store.dispatch(action);
-
       this.showToaster(this.shopItem);
       this.shopItem.lastQuantity = this.shopItem.count;
       let payload = {
@@ -139,7 +139,7 @@ export class ProductBookingComponent implements OnInit, OnChanges, OnDestroy {
 
   numero(id) {
     this.state.shopcart.items.forEach(x => {
-      if (x.id == this.articulo.id) {
+      if (x.id == id) {
         this.shopItem.count = x.count;
       }
     }

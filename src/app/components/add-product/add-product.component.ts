@@ -9,6 +9,8 @@ import { ToastrService } from 'ngx-toastr';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LogOut } from 'src/app/store/auth/auth.actions';
 import { HttpClient } from '@angular/common/http';
+import Strapi from 'strapi-sdk-javascript';
+import { ElementSchemaRegistry } from '@angular/compiler';
 
 @Component({
   selector: 'app-add-product',
@@ -17,7 +19,9 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AddProductComponent implements OnInit, OnDestroy {
 
-
+  idImg;
+  imgList = [];
+  imgs;
   state;
   subs = new Subscription();
   categorias;
@@ -34,15 +38,19 @@ export class AddProductComponent implements OnInit, OnDestroy {
   elPerPage = [5, 10, 20, 50];
   images;
   cont2 = 0;
+  formul = new FormData();
 
   constructor(private store: Store<AppState>,
     private bd: AccesoBDService,
     private router: Router,
     private toastr: ToastrService,
     private modalService: NgbModal,
-    private http: HttpClient) { }
+    private http: HttpClient) {
+
+  }
 
   ngOnInit() {
+
     this.subs.add(this.store.subscribe((x) => this.state = x));
     this.subs.add(this.bd.getArticulos().subscribe(x => {
       this.lista = x;
@@ -71,9 +79,11 @@ export class AddProductComponent implements OnInit, OnDestroy {
       IdCategoria: new FormControl('', Validators.required),
       id: new FormControl(''),
       Url: new FormControl(''),
-      Images: new FormControl(''),
-    }
-    )
+
+    });
+    this.imgs = new FormGroup({
+      images: new FormControl(''),
+    })
     this.page = 1;
     this.pageSize = 5;
 
@@ -89,15 +99,8 @@ export class AddProductComponent implements OnInit, OnDestroy {
         a = x;
         if ((a.length == 1 && a[0].id == this.form.value.id) || a.length == 0) {
 
-          let payload = {
-            "files": this.selectedFile, // Buffer or stream of file(s)
-            "refId": this.form.value.id, // User's Id.
-            "ref": "Articulo", // Model name.
-            "field": "images" // Field name in the User model.
-          }
-          console.log(payload.files);
           this.subs.add(this.bd.setArticulo(this.form.value).subscribe((x) => { }));
-          this.subs.add(this.http.post('http://localhost:1337/upload', payload).subscribe(x => { }));
+          this.uploadStrapi(this.form.value.id);
           let a = this.lista.findIndex((x) => x.id == this.form.value.id);
           this.lista[a].name = this.form.value.name;
           this.lista[a].price = this.form.value.price;
@@ -120,7 +123,6 @@ export class AddProductComponent implements OnInit, OnDestroy {
         if (a.length > 0) {
           this.toastr.error("Ya existe un articulo con ese nombre y categoria");
         } else {
-          console.log(this.form.value);
           this.subs.add(this.bd.createArticulo(this.form.value).subscribe((x) => { }));
           this.toastr.success("Artículo añadido");
           this.lista.push(this.form.value);
@@ -191,6 +193,25 @@ export class AddProductComponent implements OnInit, OnDestroy {
 
   }
 
+  editImages(content, list) {
+    this.selectedFile = [];
+    this.idImg = "";
+    this.buildImgList(list);
+    this.idImg = list.id;
+    setTimeout((x) => {
+      this.modalService.open(content);
+    }, 500);
+
+  }
+
+  buildImgList(list) {
+    this.imgList = [];
+    list.images.forEach(element => {
+      if (element.id != undefined) {
+        this.imgList.push(element);
+      }
+    });
+  }
 
 
   logOut() {
@@ -251,34 +272,48 @@ export class AddProductComponent implements OnInit, OnDestroy {
     this.pageSize = parseInt((<HTMLInputElement>document.getElementById('epp')).value);
   }
 
-  selectedFile;
+  selectedFile = [];
 
-  /*onFileChanged(event) {
-    this.selectedFile = event.target.files[0]
-  }*/
-
-  /*onUpload() {
-    // this.http is the injected HttpClient
-    /*console.log(this.selectedFile);
-    this.http.post('http://localhost:1337/upload', this.selectedFile)
-      .subscribe((x) => console.log(x));
-  }*/
 
   onFileChanged(event) {
-    //let me = this;
-    let file = event.target.files[0];
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function () {
-      //me.modelvalue = reader.result;
-      console.log(reader.result);
 
-    };
-    reader.onerror = function (error) {
-      console.log('Error: ', error);
-    };
+    this.selectedFile.push(event.target.files[0]);
 
-    this.selectedFile = (reader.result);
   }
 
+  async uploadStrapi(id) {
+    const strapi = new Strapi('http://localhost:1337');
+    const form = new FormData();
+    this.selectedFile.forEach((x) => {
+      form.append('files', x, x.name);
+    }
+    )
+    form.append("refId", this.idImg); // User's Id.
+    form.append("ref", "Articulo") // Model name.
+    form.append("field", "images") // Field name in the model.
+    this.selectedFile = [];
+    const files = await strapi.upload(form);
+    this.subs.add(this.bd.getArticulos().subscribe((x) => {
+      this.lista = x;
+      let a = this.lista.find((element) => element.id == this.idImg);
+      this.buildImgList(a);
+    }));
+  }
+
+  borrarImagen(id) {
+    let a = this.imgList.findIndex((element) => element.id == id);
+
+    if (confirm("Se va a borrar esta imagen")) {
+      /*this.imgList.splice(a, 1);*/
+      this.subs.add(this.http.delete("http://localhost:1337/upload/files/" + id).subscribe(x => {
+        this.subs.add(this.bd.getArticulos().subscribe((x) => {
+          this.lista = x;
+          let a = this.lista.find((element) => element.id == this.idImg);
+          this.buildImgList(a);
+        }));
+      }));
+
+    }
+
+  }
 }

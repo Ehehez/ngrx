@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { User } from '../../models/user';
-import { AppState, selectAuthState } from '../../store/app.states';
+import { AppState } from '../../store/app.states';
 import { LogIn, AuthActionTypes } from '../../store/auth/auth.actions';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ShopcartActionTypes } from 'src/app/store/shopcart/shopcart.actions';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -67,9 +67,7 @@ export class LogInComponent implements OnInit, OnDestroy {
           this.router.navigateByUrl('');
         });
       }
-    }, 400);
-
-
+    }, 500);
   }
 
   ngOnDestroy() {

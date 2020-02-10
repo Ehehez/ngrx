@@ -1,4 +1,4 @@
-import { Image } from './images';
+
 
 export class Articulo {
     id: any;
@@ -7,6 +7,6 @@ export class Articulo {
     quantity: number;
     idCategoria: number;
     url?: string;
-    Images: Image[];
+    images: [];
 }
 

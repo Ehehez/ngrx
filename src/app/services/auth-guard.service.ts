@@ -13,7 +13,7 @@ export class AuthGuardService implements CanActivate, OnDestroy {
   constructor(
     public auth: AuthService,
     public router: Router,
-    private store: Store<AppState>
+    private store: Store<AppState>,
   ) {
 
   }
@@ -21,7 +21,8 @@ export class AuthGuardService implements CanActivate, OnDestroy {
     this.store.subscribe((o) => this.state = o);
     (this.state);
     if (this.state.auth.isAuthenticated === true && this.auth.getToken() != null) {
-      if (this.state.auth.user.role === "Admin") {
+      if (this.state.auth.user.role === "Admin" && this.router.url != "/") {
+
         this.router.navigateByUrl('/addprod');
       }
       return true;

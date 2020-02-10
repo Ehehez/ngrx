@@ -38,7 +38,7 @@ import { reducers } from './store/app.states';
 import { TokenInterceptor, ErrorInterceptor } from './services/token.interceptor';
 import { storageMetaReducer } from './store/reducers/storage.metareducer';
 import { FichaArticuloComponent } from './components/ficha-articulo/ficha-articulo.component';
-import { FichaArticuloService } from './services/ficha-articulo.service';
+//import { FichaArticuloService } from './services/ficha-articulo.service';
 
 
 
@@ -84,7 +84,6 @@ import { FichaArticuloService } from './services/ficha-articulo.service';
     ShopcartService,
     AccesoBDService,
     AuthGuardRoleService,
-    FichaArticuloService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

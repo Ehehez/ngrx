@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FichaArticuloService } from 'src/app/services/ficha-articulo.service';
 import { Articulo } from 'src/app/models/articulo';
-import { switchMap } from 'rxjs-compat/operator/switchMap';
 import { AccesoBDService } from 'src/app/services/acceso-bd.service';
 import { AppState } from 'src/app/store/app.states';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
+import { LogOut } from 'src/app/store/auth/auth.actions';
+import { ShopItem } from 'src/app/models/shopItem';
+import { ShopcartAction } from 'src/app/models/shopcartAction';
+import { ShopcartActionTypes } from 'src/app/store/shopcart/shopcart.actions';
 
 @Component({
   selector: 'app-ficha-articulo',
@@ -15,30 +17,36 @@ import { Subscription } from 'rxjs';
 })
 export class FichaArticuloComponent implements OnInit {
 
-
-  articulo: Articulo;
+  imgList = [];
+  articulo: Articulo[] = [];
+  artic: Articulo;
   state;
   subs = new Subscription();
   cont = 0;
   categorias;
   id;
   user;
+  shopItem = new ShopItem();
+
   constructor(private route: ActivatedRoute,
     private router: Router,
     private bd: AccesoBDService,
     private store: Store<AppState>) {
-    this.id = this.route.snapshot.paramMap.get('id');
     this.route.params.subscribe(params => {
-      this.id = +params['id']
+      this.id = +params['id'];
+      console.log(this.id);
     });
-    this.bd.getArticulo(+this.id).subscribe((x) => {
-      this.articulo = x;
-      console.log(this.articulo);
-      this.articulo.Images.forEach((x) => {
-        x.url = 'http://localhost:1337' + x.url;
+    this.subs.add(this.bd.getArticulo(+this.id).subscribe((x) => {
+      this.articulo.push(x);
+      this.articulo.forEach((x) => {
+        x.images.forEach((x: any) => {
+          if (x.id != undefined) {
+            this.imgList.push(x);
+          }
+        })
       })
-    });
-
+    }));
+    this.artic = this.articulo[0];
     this.subs.add(this.store.subscribe((x) => this.state = x));
     this.user = this.state.auth.user.email;
     this.subs.add(this.bd.getCategorias().subscribe((x) => {
@@ -54,7 +62,11 @@ export class FichaArticuloComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    if (this.state.auth.user.role === "Admin") {
+      document.getElementById('menu').style.visibility = "hidden";
+      document.getElementById('menu').style.display = "none";
+      document.getElementById('btn-añadir').style.visibility = "visible";
+    }
   }
 
   getCategoria(list) {
@@ -68,4 +80,36 @@ export class FichaArticuloComponent implements OnInit {
     return "";
   }
 
+  logOut() {
+    this.store.dispatch(new LogOut);
+    setTimeout(() => {
+      if (this.state.auth.isAuthenticated == false) {
+        localStorage.clear();
+        this.router.navigateByUrl('/log-in');
+      }
+    }, 100)
+  }
+
+  goToRemove() {
+    this.router.navigateByUrl('/delprod');
+  }
+
+  goToAddCat() {
+    this.router.navigateByUrl('/addcat');
+  }
+  goToAdd() {
+    this.router.navigateByUrl('/addprod');
+  }
+
+  private goToBasket() {
+    this.router.navigate(['/basket']);
+  }
+
+  private goToHistorial() {
+    this.router.navigate(['/historial']);
+  }
+
+  private goToProducts() {
+    this.router.navigate(['/']);
+  }
 }
