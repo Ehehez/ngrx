@@ -24,7 +24,7 @@
     "@ngrx/store": "^5.2.0",
     "@ngrx/store-devtools": "^8.6.0",
     "angular-font-awesome": "^3.1.2",
-    "bootstrap": "^4.1.0",
+    "bootstrap": "^4.3.1",
     "font-awesome": "^4.7.0",
     "git": "^0.1.5",
     "lodash-es": "^4.17.15",
